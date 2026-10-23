@@ -275,10 +275,10 @@ footer { color: var(--dim); font-size: 11.5px; font-family: var(--f-mono); lette
   <header class="hero">
     <span class="fecha" aria-hidden="true">22.10.26_TAREA_3.2</span>
     <div class="marca">
-      <h1>Alberti<small>// Fleissner</small></h1>
+      <h1>Fleissner <small>// Alberti</small></h1>
       <div class="lado">
         <span class="lbl">Criptografía clásica // tarea 3.2</span>
-        <p>Desciframos el disco de Alberti que manda el otro grupo y ciframos con la rejilla giratoria el texto que da Lucy. Todo corre en el navegador.</p>
+        <p>Desciframos el disco de Alberti que manda el otro grupo y ciframos con la rejilla giratoria el texto.</p>
         <div class="acc"><a href="#descifrar">Descifrar Alberti</a><a class="alt" href="#cifrar">Cifrar rejilla</a></div>
       </div>
     </div>
@@ -297,7 +297,6 @@ footer { color: var(--dim); font-size: 11.5px; font-family: var(--f-mono); lette
     <section class="canal alb" id="descifrar" aria-labelledby="t-alb">
       <div class="canal-head">
         <h2 id="t-alb">Descifrar <em>// Alberti</em></h2>
-        <span class="rol">recibimos del otro grupo</span>
       </div>
 
       <div class="paso">
@@ -369,7 +368,7 @@ footer { color: var(--dim); font-size: 11.5px; font-family: var(--f-mono); lette
     <section class="canal rej" id="cifrar" aria-labelledby="t-rej">
       <div class="canal-head">
         <h2 id="t-rej">Cifrar <em>// Rejilla</em></h2>
-        <span class="rol">enviamos al otro grupo</span>
+        
       </div>
 
       <div class="paso">
@@ -414,11 +413,11 @@ footer { color: var(--dim); font-size: 11.5px; font-family: var(--f-mono); lette
       </div>
 
       <div class="paso">
-        <div class="paso-t"><span class="n">4</span><h3>Para el otro grupo</h3></div>
+        <div class="paso-t"><span class="n">4</span><h3>Configuración para decifrar</h3></div>
         <p class="ayuda">En Cifrario: <b>Rejilla giratoria → Descifrar</b>, pegar el mensaje en un campo y este JSON en el otro.</p>
         <div class="fila">
-          <button class="btn main" id="rej-copychat" type="button">Copiar todo para el chat</button>
-          <button class="btn mini" id="rej-copycif" type="button">Copiar solo el cifrado</button>
+          <!-- <button class="btn main" id="rej-copychat" type="button">Copiar todo para el chat</button>
+          <button class="btn mini" id="rej-copycif" type="button">Copiar solo el cifrado</button>-->
           <button class="btn mini" id="rej-copyjson" type="button">Copiar solo el JSON</button>
         </div>
         <pre class="json" id="rej-json">—</pre>
