@@ -1196,8 +1196,8 @@ if (typeof module !== "undefined") module.exports = { pruebasRejilla, pruebasAlb
   $("rej-ej").addEventListener("click", () => { R.filas = ["X...", "...X", "..X.", ".X.."]; $("rej-n").value = 4; $("rej-filas").value = rejillaComoTexto(R.filas); pintarEditor(); cifrarYMostrar(); });
   $("rej-azar").addEventListener("click", () => { R.filas = generarRejilla(+$("rej-n").value); $("rej-filas").value = rejillaComoTexto(R.filas); pintarEditor(); cifrarYMostrar(); });
   $("rej-go").addEventListener("click", () => { cifrarYMostrar(); if (R.res) { pararRej(); R.t = 0; pintarPaso(); toast("Cifrado"); } });
-  $("rej-copychat").addEventListener("click", () => copiar(textoChat(), "Mensaje para el chat"));
-  $("rej-copycif").addEventListener("click", () => copiar(R.res ? R.res.cifrado : "", "Cifrado"));
+  //$("rej-copychat").addEventListener("click", () => copiar(textoChat(), "Mensaje para el chat"));
+  //$("rej-copycif").addEventListener("click", () => copiar(R.res ? R.res.cifrado : "", "Cifrado"));
   $("rej-copyjson").addEventListener("click", () => copiar(R.res ? JSON.stringify(configCifrario(R.filas, R.res.longitud), null, 2) : "", "JSON"));
   $("rej-bloque").addEventListener("change", e => { R.bloque = +e.target.value; pararRej(); R.t = R.res.n * R.res.n; pintarPaso(); pintarMinis(); });
   $("rej-rango").addEventListener("input", e => { pararRej(); R.t = +e.target.value; pintarPaso(); });
