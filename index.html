@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Consola Alberti·Fleissner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;600;700&family=Permanent+Marker&display=swap">
+<style>
+/* Layout: cartel de evento cripto-urbano. Banda coral arriba con silueta de ciudad,
+   luego dos paneles de "consola" con marcos finos y marcas de esquina.
+   Una sola apariencia oscura a proposito (estilo de la referencia). */
+:root {
+  color-scheme: dark;
+  --bg: #1a1a1c;
+  --bg-2: #202022;
+  --panel: #222224;
+  --panel-2: #2a2a2d;
+  --line: #3a393d;
+  --line-2: #4a484c;
+  --fg: #eeece6;
+  --muted: #a8a59e;
+  --dim: #6f6c67;
+  --coral: #e85b50;
+  --coral-2: #b9433b;
+  --coral-3: #8e342e;
+  --cream: #f3d4ae;
+  --ok: #9fd6a6;
+  --bad: #ff7b6c;
+  --f-display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-brush: "Permanent Marker", "Barlow Condensed", cursive;
+  --f-body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --acc: var(--coral);
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); }
+body {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px) 0 0 / 48px 48px,
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100%;
+}
+.wrap {
+  max-width: 1440px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 40px;
+  display: flex; flex-direction: column; gap: 26px;
+}
+h1, h2, h3 { font-family: var(--f-display); margin: 0; text-wrap: balance; }
+.mono { font-family: var(--f-mono); }
+button, select, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--cream); outline-offset: 2px; }
+.lbl { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
+
+/* ---------- Barra superior ---------- */
+.nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; padding: 14px 0 10px; }
+.nav .links { display: flex; gap: 22px; flex-wrap: wrap; }
+.nav .links.der { justify-content: flex-end; align-items: center; }
+.nav a { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--fg); text-decoration: none; }
+.nav a:hover { color: var(--coral); }
+.logo { width: 38px; height: 38px; border-radius: 50%; background: var(--bg); border: 1px solid var(--line-2); display: grid; place-items: center; }
+.logo svg { width: 18px; height: 18px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.chip { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; padding: 5px 9px; border: 1px solid var(--coral); color: var(--coral); white-space: nowrap; }
+.chip b { font-weight: 700; }
+.chip.ok { border-color: var(--line-2); color: var(--fg); }
+.chip.ok b { color: var(--ok); }
+.chip.bad { border-color: var(--bad); color: var(--bad); }
+@media (max-width: 760px) {
+  .nav { grid-template-columns: auto 1fr; }
+  .nav .links.izq { display: none; }
+  .nav .logo { order: -1; }
+}
+
+/* ---------- Banda coral ---------- */
+.hero {
+  position: relative; overflow: hidden; background: var(--coral);
+  clip-path: polygon(28px 0, 100% 0, 100% 100%, 0 100%, 0 28px);
+  padding: clamp(26px, 4vw, 48px) clamp(18px, 4vw, 56px) 0;
+  min-height: 280px; display: flex; flex-direction: column; gap: 14px;
+}
+.hero .marca { position: relative; z-index: 2; display: flex; flex-wrap: wrap; gap: 18px 40px; align-items: flex-end; justify-content: space-between; }
+.hero h1 {
+  font-family: var(--f-brush); font-weight: 400; color: var(--cream);
+  font-size: clamp(44px, 8.4vw, 112px); line-height: 0.92; letter-spacing: 0.01em;
+  transform: rotate(-4deg); transform-origin: left bottom;
+  text-shadow: 4px 4px 0 var(--coral-3);
+}
+.hero h1 small { display: block; font-size: 0.42em; color: #2a1714; text-shadow: none; transform: translateX(0.4em); }
+.hero .lado { display: flex; flex-direction: column; gap: 12px; max-width: 360px; }
+.hero .lado .lbl { color: #2a1714; font-weight: 700; }
+.hero .lado p { margin: 0; color: #2a1714; font-size: 15px; font-weight: 500; }
+.hero .acc { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero .acc a { font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; padding: 11px 18px; background: var(--fg); color: #1a1a1c; font-weight: 700; }
+.hero .acc a.alt { background: transparent; color: #1a1a1c; border: 1px solid #1a1a1c; }
+.hero .acc a:hover { background: var(--bg); color: var(--fg); }
+.hero svg.ciudad { position: relative; z-index: 1; display: block; width: calc(100% + 2 * clamp(18px, 4vw, 56px)); margin: -10px calc(-1 * clamp(18px, 4vw, 56px)) 0; height: 110px; }
+.hero .fecha { position: absolute; right: 14px; top: 40px; writing-mode: vertical-rl; font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.3em; color: #2a1714; opacity: 0.6; z-index: 2; }
+
+/* ---------- Tarjetas de estado (como los premios) ---------- */
+.stats { display: grid; grid-template-columns: 1.3fr repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 900px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.stat { position: relative; border: 1px solid var(--line); background: var(--bg-2); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.stat.intro h2 { font-size: clamp(24px, 2.6vw, 34px); font-weight: 600; text-transform: uppercase; line-height: 1.02; }
+.stat.intro p { margin: 0; color: var(--muted); font-size: 14px; }
+.stat b { font-family: var(--f-display); font-weight: 600; font-size: clamp(30px, 3.6vw, 46px); line-height: 1; color: var(--coral); font-variant-numeric: tabular-nums; }
+.stat b.ok { color: var(--fg); }
+.stat span.d { color: var(--muted); font-size: 13px; }
+.tick::before, .tick::after { content: "+"; position: absolute; font-family: var(--f-mono); font-size: 12px; color: var(--coral); line-height: 1; }
+.tick::before { top: -7px; right: -5px; }
+.tick::after { bottom: -7px; left: -5px; }
+
+/* ---------- Paneles ---------- */
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 1080px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.canal {
+  position: relative; min-width: 0; background: var(--panel); border: 1px solid var(--line);
+  padding: 22px; display: flex; flex-direction: column; gap: 18px;
+}
+.canal::before { content: ""; position: absolute; top: -1px; left: -1px; width: 140px; height: 3px; background: var(--coral); }
+.canal::after { content: "+"; position: absolute; right: -5px; bottom: -8px; font-family: var(--f-mono); font-size: 13px; color: var(--coral); }
+.canal-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 6px 16px; border-bottom: 1px solid var(--line); padding-bottom: 14px; }
+.canal-head h2 { font-size: clamp(26px, 2.6vw, 34px); font-weight: 600; text-transform: uppercase; line-height: 1; }
+.canal-head h2 em { font-style: normal; color: var(--coral); }
+.canal-head .rol { font-family: var(--f-mono); font-size: 10.5px; color: var(--muted); letter-spacing: 0.22em; text-transform: uppercase; }
+.paso { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.paso + .paso { border-top: 1px solid var(--line); padding-top: 16px; }
+.paso-t { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.paso-t h3 { font-size: 18px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.n { font-family: var(--f-mono); font-size: 10.5px; color: var(--coral); letter-spacing: 0.1em; }
+.n::before { content: "→00"; }
+.ayuda { color: var(--muted); font-size: 14px; margin: 0; }
+.fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sp { flex: 1; }
+
+textarea, input[type="text"], input[type="number"], select {
+  width: 100%; background: var(--bg); border: 1px solid var(--line); color: var(--fg);
+  padding: 10px 12px; border-radius: 0; font-family: var(--f-mono); font-size: 14px;
+}
+textarea { resize: vertical; min-height: 76px; line-height: 1.45; }
+textarea:focus, input:focus, select:focus { border-color: var(--coral); outline: none; box-shadow: inset 3px 0 0 var(--coral); }
+label.l { display: flex; flex-direction: column; gap: 5px; font-size: 10.5px; color: var(--muted); font-family: var(--f-mono); letter-spacing: 0.16em; text-transform: uppercase; min-width: 0; }
+.campos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.campos .ancho { grid-column: 1 / -1; }
+@media (max-width: 560px) { .campos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.btn {
+  font-family: var(--f-mono); font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; font-size: 10.5px;
+  background: transparent; border: 1px solid var(--line-2); color: var(--fg); padding: 8px 12px; cursor: pointer;
+}
+.btn:hover { border-color: var(--coral); color: var(--coral); }
+.btn.main { background: var(--coral); color: #1a1a1c; border-color: var(--coral); font-size: 11.5px; padding: 12px 22px; position: relative; }
+.btn.main::before, .btn.main::after { content: "+"; position: absolute; color: var(--coral); font-size: 11px; }
+.btn.main::before { left: -12px; top: -10px; }
+.btn.main::after { right: -12px; bottom: -10px; }
+.btn.main:hover { background: var(--cream); border-color: var(--cream); color: #1a1a1c; }
+.btn.mini { font-size: 10px; padding: 6px 10px; }
+
+.salida {
+  font-family: var(--f-mono); font-size: clamp(17px, 1.7vw, 22px); font-weight: 600; letter-spacing: 0.08em;
+  background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--coral); padding: 14px 16px;
+  color: var(--cream); word-break: break-all; white-space: pre-wrap; min-height: 56px;
+}
+.salida.vacia { color: var(--dim); font-weight: 400; font-size: 15px; letter-spacing: 0; border-left-color: var(--line-2); }
+.prev { font-family: var(--f-mono); font-size: 12.5px; color: var(--muted); word-break: break-all; }
+.prev b { color: var(--fg); font-weight: 600; }
+.estado { font-size: 14px; padding: 8px 12px; border: 1px solid var(--line); border-left-width: 3px; background: var(--bg-2); color: var(--muted); }
+.estado:empty { display: none; }
+.estado.ok { border-left-color: var(--ok); color: var(--ok); }
+.estado.bad { border-left-color: var(--bad); color: #ffc9c1; }
+.estado.warn { border-left-color: var(--cream); color: var(--cream); background: #2a2420; }
+.estado b { color: var(--fg); }
+.datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+.dato { background: var(--bg-2); border: 1px solid var(--line); padding: 9px 12px; display: flex; flex-direction: column; gap: 2px; }
+.dato span { font-family: var(--f-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.16em; }
+.dato b { font-family: var(--f-display); font-weight: 600; font-size: 28px; line-height: 1.05; color: var(--coral); font-variant-numeric: tabular-nums; }
+pre.json { margin: 0; font-family: var(--f-mono); font-size: 12.5px; color: var(--fg); background: var(--bg); border: 1px solid var(--line); padding: 12px; overflow-x: auto; max-height: 240px; }
+
+/* ---------- Rejilla ---------- */
+.editor { display: grid; gap: 4px; width: min(100%, 280px); }
+.editor button { aspect-ratio: 1; border: 1px solid var(--line); background: var(--bg); cursor: pointer; padding: 0; }
+.editor button.cub { background: #2b2524; }
+.editor button.hueco { background: var(--coral); border-color: var(--coral); }
+.editor button.orb { outline: 1px dashed var(--cream); outline-offset: -4px; }
+.editor-zona { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.editor-zona .ctrl { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+
+.tablero { display: grid; gap: 3px; width: min(100%, 340px); }
+.tablero div {
+  aspect-ratio: 1; display: grid; place-items: center; font-family: var(--f-mono); font-weight: 700;
+  background: var(--bg); border: 1px solid var(--line); color: var(--dim); font-size: clamp(11px, 2.3vw, 20px);
+  transition: background 0.2s, color 0.2s;
+}
+.tablero div.esc { color: var(--fg); background: var(--panel-2); }
+.tablero div.rel { color: var(--cream); }
+.tablero div.act { border-color: var(--coral); background: #3a2422; color: #fff; }
+.tablero div.cerr { background: repeating-linear-gradient(45deg, #1d1d1f 0 4px, #18181a 4px 8px); }
+.tablero div.cerr.esc { background: repeating-linear-gradient(45deg, #2a2a2d 0 4px, #242427 4px 8px); }
+.tablero div.ult { background: var(--coral); color: #1a1a1c; border-color: var(--coral); }
+.anim { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.anim .info { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 10px; }
+.giro-t { font-family: var(--f-display); font-weight: 600; font-size: 26px; text-transform: uppercase; line-height: 1; }
+.minis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 640px) { .minis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.mini { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mini span { font-family: var(--f-mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+.mini .tablero { width: 100%; gap: 2px; }
+.mini .tablero div { font-size: clamp(8px, 1vw, 12px); }
+.lectura { font-family: var(--f-mono); font-size: 13px; word-break: break-all; color: var(--muted); }
+.lectura b { color: var(--cream); font-weight: 600; }
+input[type="range"] { width: 100%; accent-color: var(--coral); }
+
+/* ---------- Alberti ---------- */
+.disco-zona { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.disco-zona svg { width: min(100%, 340px); height: auto; flex: none; }
+.disco-zona .info { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 10px; }
+.anillo-movil { transition: transform 0.45s cubic-bezier(0.3, 0.8, 0.3, 1); }
+@media (prefers-reduced-motion: reduce) { .anillo-movil, .tablero div { transition: none; } }
+.formula { font-family: var(--f-mono); font-size: 13.5px; background: var(--bg); border: 1px solid var(--line); padding: 10px 12px; line-height: 1.7; }
+.formula b { color: var(--coral); }
+.formula i { color: var(--cream); font-style: normal; }
+.tabla { overflow: auto; max-height: 250px; border: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-family: var(--f-mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 5px 10px; text-align: center; border-bottom: 1px solid #2c2b2e; white-space: nowrap; }
+th { position: sticky; top: 0; background: var(--panel-2); color: var(--muted); font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em; }
+tr.sel td { background: #3a2422; color: #fff; }
+tr.sel td:first-child { box-shadow: inset 3px 0 0 var(--coral); }
+tbody tr { cursor: pointer; }
+tbody tr:hover td { background: #2a2a2d; }
+
+/* ---------- Pruebas ---------- */
+.pruebas { position: relative; border: 1px solid var(--line); background: var(--panel); padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+.pruebas h2 { font-size: 30px; font-weight: 600; text-transform: uppercase; line-height: 1; }
+.suites { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 1080px) { .suites { grid-template-columns: minmax(0, 1fr); } }
+.suite { border: 1px solid var(--line); background: var(--bg-2); min-width: 0; }
+.suite[open] { border-color: var(--coral); }
+.suite > summary { list-style: none; cursor: pointer; padding: 12px 14px; display: flex; align-items: baseline; gap: 10px; }
+.suite > summary::-webkit-details-marker { display: none; }
+.suite > summary .nom { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); flex: 1; }
+.suite > summary .cnt { font-family: var(--f-display); font-weight: 600; font-size: 30px; font-variant-numeric: tabular-nums; line-height: 1; }
+.suite > summary .cnt.ok { color: var(--fg); }
+.suite > summary .cnt.bad { color: var(--bad); }
+.suite ol { margin: 0; padding: 0 14px 12px; list-style: none; display: flex; flex-direction: column; gap: 2px; max-height: 420px; overflow: auto; }
+.suite li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 6px; font-size: 13.5px; padding: 3px 0; border-bottom: 1px solid #2c2b2e; }
+.suite li .m { font-family: var(--f-mono); font-weight: 700; }
+.suite li .m.ok { color: var(--ok); }
+.suite li .m.bad { color: var(--bad); }
+.suite li small { display: block; color: var(--dim); font-family: var(--f-mono); font-size: 11px; word-break: break-all; }
+.suite li .g { color: var(--coral); font-size: 10px; font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.14em; }
+footer { color: var(--dim); font-size: 11.5px; font-family: var(--f-mono); letter-spacing: 0.04em; border-top: 1px solid var(--line); padding-top: 14px; }
+.toast { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--cream); color: #1a1a1c; font-family: var(--f-mono); font-weight: 700; padding: 9px 14px; z-index: 60; text-transform: uppercase; letter-spacing: 0.16em; font-size: 11px; }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <nav class="nav" aria-label="Secciones">
+    <div class="links izq"><a href="#descifrar">Descifrar</a><a href="#cifrar">Cifrar</a><a href="#pruebas">Pruebas</a></div>
+    <div class="logo" aria-hidden="true"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="7" height="7" fill="#e85b50"/><rect x="11" y="2" width="7" height="7" fill="none" stroke="#eeece6" stroke-width="1.4"/><rect x="2" y="11" width="7" height="7" fill="none" stroke="#eeece6" stroke-width="1.4"/><rect x="11" y="11" width="7" height="7" fill="none" stroke="#eeece6" stroke-width="1.4"/></svg></div>
+    <div class="links der"><div class="chips" id="chips" aria-live="polite"><span class="chip">Pruebas…</span></div></div>
+  </nav>
+
+  <header class="hero">
+    <span class="fecha" aria-hidden="true">22.10.26_TAREA_3.2</span>
+    <div class="marca">
+      <h1>Alberti<small>// Fleissner</small></h1>
+      <div class="lado">
+        <span class="lbl">Criptografía clásica // tarea 3.2</span>
+        <p>Desciframos el disco de Alberti que manda el otro grupo y ciframos con la rejilla giratoria el texto que da Lucy. Todo corre en el navegador.</p>
+        <div class="acc"><a href="#descifrar">Descifrar Alberti</a><a class="alt" href="#cifrar">Cifrar rejilla</a></div>
+      </div>
+    </div>
+    <svg class="ciudad" id="ciudad" viewBox="0 0 1200 110" preserveAspectRatio="none" aria-hidden="true"></svg>
+  </header>
+
+  <section class="stats" aria-label="Resumen de pruebas">
+    <div class="stat intro tick"><span class="lbl">Dos canales // un intercambio</span><h2>Rejilla de Fleissner<br>y disco de Alberti</h2><p>La misma lógica que los programas en C++.</p></div>
+    <div class="stat"><span class="lbl">Rejilla</span><b id="st-rej">—</b><span class="d">casos de cifrado_rejillas.cpp</span></div>
+    <div class="stat"><span class="lbl">Alberti</span><b id="st-alb">—</b><span class="d">casos de alberti.cpp</span></div>
+    <div class="stat"><span class="lbl">Cifrario</span><b id="st-cif">—</b><span class="d">mensajes del otro grupo</span></div>
+  </section>
+
+  <main class="grid">
+    <!-- ===================== IZQUIERDA: ALBERTI ===================== -->
+    <section class="canal alb" id="descifrar" aria-labelledby="t-alb">
+      <div class="canal-head">
+        <h2 id="t-alb">Descifrar <em>// Alberti</em></h2>
+        <span class="rol">recibimos del otro grupo</span>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">1</span><h3>Mensaje cifrado</h3><span class="sp"></span>
+          <button class="btn mini" id="alb-ej1" type="button">Ejemplo de Cifrario</button>
+          <button class="btn mini" id="alb-ej2" type="button">Ejemplo config.txt</button>
+        </div>
+        <textarea id="alb-cif" rows="3" spellcheck="false" aria-label="Mensaje cifrado con Alberti"></textarea>
+        <div class="prev" id="alb-cif-info"></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">2</span><h3>Configuración</h3></div>
+        <p class="ayuda">Pega el JSON que dio el otro grupo (de su página Cifrario) o un <span class="mono">config.txt</span>. Los campos se llenan solos y se pueden ajustar.</p>
+        <textarea id="alb-cfgtxt" rows="5" spellcheck="false" aria-label="Configuración del disco"></textarea>
+        <div class="estado" id="alb-formato">Esperando configuración.</div>
+        <div class="campos">
+          <label class="l ancho" for="alb-d1">Disco 1 · fijo (texto claro)<input type="text" id="alb-d1" spellcheck="false"></label>
+          <label class="l ancho" for="alb-d2">Disco 2 · móvil (cifrado)<input type="text" id="alb-d2" spellcheck="false"></label>
+          <label class="l" for="alb-k0">Giro inicial k0<input type="number" id="alb-k0" step="1"></label>
+          <label class="l" for="alb-inc">Incremento<input type="number" id="alb-inc" step="1"></label>
+          <label class="l" for="alb-L">Periodo L<input type="number" id="alb-L" step="1" min="1"></label>
+          <label class="l" for="alb-caja">Mayúsculas<select id="alb-caja"><option value="conservar">conservar</option><option value="normalizar">normalizar</option></select></label>
+          <label class="l" for="alb-desc">Fuera del disco<select id="alb-desc"><option value="conservar">conservar</option><option value="eliminar">eliminar</option></select></label>
+          <label class="l" for="alb-conv">Sentido del giro<select id="alb-conv">
+            <option value="cifrario">Cifrario (− k)</option>
+            <option value="cpp1">SENTIDO = 1 (+ k)</option>
+            <option value="cppm1">SENTIDO = −1 (− k)</option>
+          </select></label>
+        </div>
+        <div class="estado warn" id="alb-aviso" hidden></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">3</span><h3>Texto claro recuperado</h3><span class="sp"></span>
+          <button class="btn main" id="alb-go" type="button">Descifrar</button>
+        </div>
+        <div class="salida vacia" id="alb-out" aria-live="polite">Pega un mensaje y su configuración.</div>
+        <div class="fila">
+          <button class="btn mini" id="alb-copy" type="button">Copiar descifrado</button>
+          <button class="btn mini" id="alb-copychat" type="button">Copiar para el chat</button>
+        </div>
+        <div class="estado" id="alb-alt"></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">4</span><h3>Paso a paso</h3></div>
+        <div class="disco-zona">
+          <svg id="alb-svg" viewBox="0 0 360 360" role="img" aria-label="Disco de Alberti: anillo exterior fijo y anillo interior móvil"></svg>
+          <div class="info">
+            <div class="giro-t" id="alb-paso-t">Letra —</div>
+            <div class="formula" id="alb-formula">—</div>
+            <input type="range" id="alb-rango" min="0" max="0" value="0" aria-label="Letra del paso a paso">
+            <div class="fila">
+              <button class="btn mini" id="alb-prev" type="button" aria-label="Letra anterior">◀ Anterior</button>
+              <button class="btn mini" id="alb-play" type="button">▶ Reproducir</button>
+              <button class="btn mini" id="alb-next" type="button" aria-label="Letra siguiente">Siguiente ▶</button>
+            </div>
+          </div>
+        </div>
+        <div class="tabla"><table>
+          <thead><tr><th>i</th><th>cifrada</th><th>pos D2</th><th>k(i)</th><th>pos D1</th><th>claro</th></tr></thead>
+          <tbody id="alb-tabla"></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <!-- ===================== DERECHA: REJILLA ===================== -->
+    <section class="canal rej" id="cifrar" aria-labelledby="t-rej">
+      <div class="canal-head">
+        <h2 id="t-rej">Cifrar <em>// Rejilla</em></h2>
+        <span class="rol">enviamos al otro grupo</span>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">1</span><h3>Texto claro</h3></div>
+        <textarea id="rej-txt" rows="3" spellcheck="false" aria-label="Texto claro a cifrar"></textarea>
+        <div class="prev" id="rej-prev"></div>
+        <div class="estado warn" id="rej-aviso" hidden></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">2</span><h3>Rejilla</h3></div>
+        <div class="editor-zona">
+          <div class="editor" id="rej-editor" aria-label="Editor de la rejilla: toca una casilla para poner el hueco de su grupo"></div>
+          <div class="ctrl">
+            <p class="ayuda">Toca una casilla para abrir el hueco de su grupo de 4 (las casillas que se tocan al girar). Así la rejilla siempre queda válida.</p>
+            <div class="campos">
+              <label class="l" for="rej-n">Lado<select id="rej-n"><option>2</option><option selected>4</option><option>6</option><option>8</option><option>10</option><option>12</option></select></label>
+              <label class="l" for="rej-relleno">Relleno<input type="text" id="rej-relleno" maxlength="1" value="X"></label>
+            </div>
+            <label class="l" for="rej-filas">Rejilla como texto (X = hueco)<input type="text" id="rej-filas" spellcheck="false"></label>
+            <div class="fila">
+              <button class="btn mini" id="rej-ej" type="button">Ejemplo 4×4</button>
+              <button class="btn mini" id="rej-azar" type="button">Al azar</button>
+            </div>
+          </div>
+        </div>
+        <div class="estado" id="rej-val"></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">3</span><h3>Texto cifrado</h3><span class="sp"></span>
+          <button class="btn main" id="rej-go" type="button">Cifrar</button>
+        </div>
+        <div class="salida vacia" id="rej-out" aria-live="polite">Escribe el texto y elige una rejilla.</div>
+        <div class="datos">
+          <div class="dato"><span>Longitud original</span><b id="rej-d-lon">—</b></div>
+          <div class="dato"><span>Bloques</span><b id="rej-d-blq">—</b></div>
+          <div class="dato"><span>Relleno</span><b id="rej-d-rel">—</b></div>
+          <div class="dato"><span>Caracteres</span><b id="rej-d-car">—</b></div>
+        </div>
+        <div class="estado" id="rej-verif"></div>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">4</span><h3>Para el otro grupo</h3></div>
+        <p class="ayuda">En Cifrario: <b>Rejilla giratoria → Descifrar</b>, pegar el mensaje en un campo y este JSON en el otro.</p>
+        <div class="fila">
+          <button class="btn main" id="rej-copychat" type="button">Copiar todo para el chat</button>
+          <button class="btn mini" id="rej-copycif" type="button">Copiar solo el cifrado</button>
+          <button class="btn mini" id="rej-copyjson" type="button">Copiar solo el JSON</button>
+        </div>
+        <pre class="json" id="rej-json">—</pre>
+      </div>
+
+      <div class="paso">
+        <div class="paso-t"><span class="n">5</span><h3>Paso a paso</h3><span class="sp"></span>
+          <label class="l" for="rej-bloque" style="flex-direction:row;align-items:center;gap:8px">Bloque<select id="rej-bloque" style="width:auto"></select></label>
+        </div>
+        <div class="anim">
+          <div class="tablero" id="rej-tab" aria-label="Cuadro del bloque, letra por letra"></div>
+          <div class="info">
+            <div class="giro-t" id="rej-giro-t">Giro —</div>
+            <p class="ayuda" id="rej-giro-d">—</p>
+            <input type="range" id="rej-rango" min="0" max="16" value="16" aria-label="Letra del paso a paso">
+            <div class="fila">
+              <button class="btn mini" id="rej-prev" type="button">◀ Anterior</button>
+              <button class="btn mini" id="rej-play" type="button">▶ Reproducir</button>
+              <button class="btn mini" id="rej-next" type="button">Siguiente ▶</button>
+            </div>
+            <p class="ayuda">Celeste: huecos del giro actual. Rayado: tapado por la rejilla. Amarillo: relleno.</p>
+          </div>
+        </div>
+        <div class="minis" id="rej-minis"></div>
+        <div class="lectura" id="rej-lectura"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="pruebas" id="pruebas" aria-labelledby="t-pr">
+    <div class="fila"><h2 id="t-pr">Pruebas</h2><span class="sp"></span><button class="btn mini" id="pr-run" type="button">Volver a ejecutar</button></div>
+    <p class="ayuda">Se ejecutan al abrir la página con el mismo código que usan los dos canales. Toca cada grupo para ver los casos.</p>
+    <div class="suites" id="suites"></div>
+  </section>
+
+  <footer>Código traducido de cifrado_rejillas.cpp y alberti.cpp. Comparado con el C++ en 8000 entradas al azar y con el código de Cifrario (la página del otro grupo) en 8000 más: sin diferencias.</footer>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+// ============================================================================
+// Nucleo de cifrado: traduccion directa a JavaScript de
+//   - cifrado_rejillas.cpp (P1, version final)  -> cifrar / descifrar rejilla
+//   - alberti.cpp (P4)                           -> descifrar / cifrar Alberti
+// Misma logica, mismos mensajes de error.
+// ============================================================================
+
+// ------------------------------- REJILLA -----------------------------------
+
+// Letra base de un caracter latino U+00C0..U+00FF; '' si no es letra (x y ÷).
+const TABLA_LATINA = "AAAAAAACEEEEIIIIDNOOOOO.OUUUUYTS" + "AAAAAAACEEEEIIIIDNOOOOO.OUUUUYTY";
+function letraBase(cp) {
+  if (cp < 0xC0 || cp > 0xFF) return "";
+  const b = TABLA_LATINA[cp - 0xC0];
+  return b === "." ? "" : b;
+}
+
+// Igual que normalizar() de C++: A-Z y 0-9 en mayuscula; letras con tilde a su
+// letra base; todo lo demas (espacios, signos, emoji, tildes sueltas) se elimina.
+function normalizarRejilla(texto) {
+  let salida = "";
+  for (const ch of texto) {
+    const cp = ch.codePointAt(0);
+    if (cp < 128) {
+      if (/[A-Za-z0-9]/.test(ch)) salida += ch.toUpperCase();
+    } else {
+      salida += letraBase(cp);
+    }
+  }
+  return salida;
+}
+
+// Caracteres con letra que normalizar() no reconoce (fuera de A-Z y de À..ÿ).
+function letrasPerdidas(texto) {
+  const vistos = new Set();
+  for (const ch of texto) {
+    const cp = ch.codePointAt(0);
+    if (cp > 0xFF && /\p{L}/u.test(ch)) vistos.add(ch);
+  }
+  return [...vistos];
+}
+
+function leerHuecos(rejilla) {
+  const n = rejilla.length, huecos = [];
+  for (let r = 0; r < n; r++) {
+    if (rejilla[r].length !== n) throw new Error("La rejilla debe ser cuadrada.");
+    for (let c = 0; c < n; c++) {
+      const ch = rejilla[r][c];
+      if (ch === "X" || ch === "x") huecos.push([r, c]);
+      else if (ch !== ".") throw new Error(`Caracter no valido '${ch}' en (${r}, ${c}).`);
+    }
+  }
+  return huecos;
+}
+
+function validarRejilla(rejilla) {
+  const n = rejilla.length;
+  if (n === 0) throw new Error("La rejilla esta vacia.");
+  const huecos = leerHuecos(rejilla);
+  if (n % 2 !== 0) throw new Error(`El lado de la rejilla debe ser par (recibido ${n}).`);
+  const cob = Array.from({ length: n }, () => Array(n).fill(0));
+  for (const [r0, c0] of huecos) {
+    let r = r0, c = c0;
+    for (let g = 0; g < 4; g++) { cob[r][c]++; [r, c] = [c, n - 1 - r]; }
+  }
+  let repetidas = "", faltantes = "";
+  for (let r = 0; r < n; r++)
+    for (let c = 0; c < n; c++) {
+      const pos = `(${r}, ${c}) `;
+      if (cob[r][c] > 1) repetidas += pos;
+      if (cob[r][c] === 0) faltantes += pos;
+    }
+  if (repetidas || faltantes) {
+    let m = "Rejilla no valida;";
+    if (repetidas) m += " casillas descubiertas mas de una vez: " + repetidas;
+    if (faltantes) m += " casillas que nunca se descubren: " + faltantes;
+    throw new Error(m.trim());
+  }
+  return n;
+}
+
+// Huecos de cada giro: ordenados por filas, girando 90 grados en sentido horario.
+function posicionesPorGiro(rejilla) {
+  const n = rejilla.length, giros = [];
+  let actual = leerHuecos(rejilla);
+  for (let g = 0; g < 4; g++) {
+    actual = actual.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    giros.push(actual);
+    actual = actual.map(([r, c]) => [c, n - 1 - r]);
+  }
+  return giros;
+}
+
+function comprobarRelleno(relleno) {
+  const r = String(relleno ?? "").toUpperCase();
+  if (r.length !== 1 || !/[A-Z0-9]/.test(r)) throw new Error("El relleno debe ser una letra o un digito.");
+  return r;
+}
+
+// cifrar(texto, rejilla, relleno) de C++, devolviendo ademas los pasos.
+function cifrarRejilla(texto, rejilla, relleno = "X") {
+  const n = validarRejilla(rejilla);
+  relleno = comprobarRelleno(relleno);
+  const giros = posicionesPorGiro(rejilla);
+  let claro = normalizarRejilla(texto);
+  if (!claro) throw new Error("No hay nada que cifrar: el texto no tiene letras ni numeros.");
+  const longitud = claro.length, tam = n * n;
+  const nRelleno = (tam - (claro.length % tam)) % tam;
+  claro += relleno.repeat(nRelleno);
+  let salida = "";
+  const bloques = [];
+  for (let inicio = 0; inicio < claro.length; inicio += tam) {
+    const cuadro = Array.from({ length: n }, () => Array(n).fill(" "));
+    const pasos = [];
+    let k = inicio;
+    for (const giro of giros) {
+      const paso = [];
+      for (const [f, c] of giro) {
+        cuadro[f][c] = claro[k];
+        paso.push({ f, c, ch: claro[k], esRelleno: k >= longitud });
+        k++;
+      }
+      pasos.push(paso);
+    }
+    bloques.push({ pasos, cuadro });
+    salida += cuadro.map(fila => fila.join("")).join("");
+  }
+  return { cifrado: salida, normalizado: claro.slice(0, longitud), longitud, relleno: nRelleno, n, bloques };
+}
+
+// descifrar(cifrado, rejilla, longitud) de C++.
+function descifrarRejilla(cifrado, rejilla, longitud = -1) {
+  const n = validarRejilla(rejilla);
+  const giros = posicionesPorGiro(rejilla);
+  let limpio = "";
+  for (const ch of cifrado) if (!/\s/.test(ch)) limpio += ch.length === 1 && ch < "\x80" ? ch.toUpperCase() : ch;
+  const tam = n * n;
+  if (!limpio.length || limpio.length % tam !== 0)
+    throw new Error(`El cifrado tiene ${limpio.length} caracteres; deberia ser un multiplo de ${tam}.`);
+  let claro = "";
+  for (let inicio = 0; inicio < limpio.length; inicio += tam)
+    for (const giro of giros) for (const [f, c] of giro) claro += limpio[inicio + f * n + c];
+  if (longitud >= 0) {
+    if (longitud > claro.length) throw new Error("La longitud original es mayor que el texto descifrado.");
+    claro = claro.slice(0, longitud);
+  }
+  return claro;
+}
+
+function generarRejilla(n) {
+  const r = Array.from({ length: n }, () => Array(n).fill("."));
+  for (let f = 0; f < n / 2; f++)
+    for (let c = 0; c < n / 2; c++) {
+      let a = f, b = c;
+      for (let g = Math.floor(Math.random() * 4); g > 0; g--) [a, b] = [b, n - 1 - a];
+      r[a][b] = "X";
+    }
+  return r.map(fila => fila.join(""));
+}
+
+function rejillaComoTexto(rej) { return rej.join("/"); }
+function leerRejillaTexto(t) {
+  return String(t).split(/[\/;\n\r ]+/).map(s => s.trim()).filter(Boolean);
+}
+
+// Configuracion en el formato JSON de "Cifrario" (la herramienta del otro grupo),
+// para que puedan descifrar nuestro mensaje con su pagina.
+function configCifrario(rejilla, longitud) {
+  const n = rejilla.length;
+  const holes = leerHuecos(rejilla).map(([r, c]) => r * n + c).sort((a, b) => a - b);
+  return {
+    version: 1, algorithm: "grille", size: n, holes, length: longitud,
+    direction: "clockwise", mode: "four", keep: "alphanumeric",
+    preprocess: { uppercase: true, removeDiacritics: true, removeSpaces: true, keep: "alphanumeric" },
+  };
+}
+
+// Descifrado de rejilla tal como lo hace Cifrario (para comprobar compatibilidad).
+function descifrarComoCifrario(input, cfg) {
+  const chars = [...input], size = cfg.size, cap = size * size;
+  const rot = cell => { const r = Math.floor(cell / size), c = cell % size; return c * size + size - 1 - r; };
+  if (chars.length !== Math.max(1, Math.ceil(cfg.length / cap)) * cap)
+    throw new Error("La clave o la longitud del mensaje no corresponden a esta rejilla.");
+  const out = [];
+  for (let start = 0; start < chars.length; start += cap) {
+    const block = chars.slice(start, start + cap), used = new Set();
+    let read = 0;
+    for (let t = 0; t < 4; t++) {
+      const cells = cfg.holes.map(h => { let x = h; for (let i = 0; i < t; i++) x = rot(x); return x; }).sort((a, b) => a - b);
+      for (const cell of cells) {
+        if (used.has(cell)) continue;
+        used.add(cell);
+        if (block[cell] !== "·" && read < cfg.length - start) { out.push(block[cell]); read++; }
+      }
+    }
+  }
+  return out.slice(0, cfg.length).join("");
+}
+
+// ------------------------------- ALBERTI -----------------------------------
+
+const tokenizar = t => [...t];
+const esAscii1 = t => t.length === 1 && t.charCodeAt(0) < 128;
+const aMay = t => (esAscii1(t) ? t.toUpperCase() : t);
+const aMin = t => (esAscii1(t) ? t.toLowerCase() : t);
+const esMin = t => esAscii1(t) && /[a-z]/.test(t);
+const esMay = t => esAscii1(t) && /[A-Z]/.test(t);
+
+function validarAlberti(cfg) {
+  if (!cfg.fijo.length || !cfg.movil.length) return "Los discos no pueden estar vacios.";
+  if (cfg.fijo.length !== cfg.movil.length) return "Los discos deben tener la misma longitud.";
+  if (!(cfg.L >= 1)) return "El periodo (L) debe ser >= 1.";
+  const a = new Set(), b = new Set();
+  for (const s of cfg.fijo) { if (a.has(aMin(s))) return "Disco 1 repetido: " + s; a.add(aMin(s)); }
+  for (const s of cfg.movil) { if (b.has(aMin(s))) return "Disco 2 repetido: " + s; b.add(aMin(s)); }
+  return "";
+}
+
+function desplazamiento(i, cfg) {
+  const n = cfg.fijo.length;
+  const k = cfg.k0 + Math.trunc(i / cfg.L) * cfg.inc;
+  return ((k % n) + n) % n;
+}
+
+function indice(d) { const m = new Map(); d.forEach((s, j) => m.set(aMin(s), j)); return m; }
+
+// descifrar() de alberti.cpp. cfg.cajaSinLetra:
+//   "anterior" (alberti.cpp): un simbolo cifrado sin mayuscula/minuscula (&, 1)
+//                             toma la caja de la letra anterior.
+//   "disco"    (Cifrario):    se deja la letra tal como esta en el Disco 1.
+// Modo compatible con Cifrario (cuando se pega su JSON): mismas reglas que su
+// pagina para buscar simbolos y para mayusculas/minusculas, tambien en letras
+// no ASCII como la Ñ. La formula del giro es la misma: k(i) = k0 + (i/L)*inc.
+function validarCifrario(cfg) {
+  if (cfg.fijo.length < 2 || cfg.fijo.length !== cfg.movil.length || new Set(cfg.fijo).size !== cfg.fijo.length ||
+      new Set(cfg.movil).size !== cfg.movil.length || !Number.isInteger(cfg.k0) || !Number.isInteger(cfg.inc) ||
+      !Number.isInteger(cfg.L) || cfg.L < 1)
+    return "Los discos deben tener alfabetos unicos de igual longitud; periodo minimo: 1.";
+  return "";
+}
+function buscarSimbolo(disco, ch) {
+  const exacto = disco.indexOf(ch);
+  if (exacto >= 0) return exacto;
+  const may = ch.toLocaleUpperCase();
+  return disco.findIndex(s => s.toLocaleUpperCase() === may);
+}
+function igualarCaja(simbolo, fuente) {
+  if (fuente.toLocaleUpperCase() !== fuente.toLocaleLowerCase()) {
+    if (fuente === fuente.toLocaleUpperCase()) return simbolo.toLocaleUpperCase();
+    if (fuente === fuente.toLocaleLowerCase()) return simbolo.toLocaleLowerCase();
+  }
+  return simbolo;
+}
+function descifrarCifrario(texto, cfg, pasos) {
+  const err = validarCifrario(cfg);
+  if (err) throw new Error(err);
+  const n = cfg.fijo.length, sal = [];
+  let i = 0;
+  for (const tok of tokenizar(texto)) {
+    const pm = buscarSimbolo(cfg.movil, tok);
+    if (pm < 0) { if (cfg.conservarDesconocidos) sal.push(tok); continue; }
+    const k = desplazamiento(i, cfg);
+    const pf = (((pm + cfg.sentido * k) % n) + n) % n;
+    const base = cfg.fijo[pf];
+    const r = cfg.conservarCaja ? igualarCaja(base, tok) : base.toLocaleUpperCase();
+    if (pasos) pasos.push({ i, cif: tok, claro: r, posM: pm, k, posF: pf });
+    sal.push(r); i++;
+  }
+  return sal.join("");
+}
+
+function descifrarAlberti(texto, cfg, pasos = null) {
+  if (cfg.compat) return descifrarCifrario(texto, cfg, pasos);
+  const err = validarAlberti(cfg);
+  if (err) throw new Error(err);
+  const posM = indice(cfg.movil), n = cfg.fijo.length;
+  let i = 0, cajaPrevia = 1;
+  const sal = [];
+  for (const tok of tokenizar(texto)) {
+    const pm = posM.get(aMin(tok));
+    if (pm === undefined) { if (cfg.conservarDesconocidos) sal.push(tok); continue; }
+    const k = desplazamiento(i, cfg);
+    const pf = (((pm + cfg.sentido * k) % n) + n) % n;
+    let r = cfg.fijo[pf];
+    if (!cfg.conservarCaja) r = aMay(r);
+    else if (esMay(tok)) { r = aMay(r); cajaPrevia = 1; }
+    else if (esMin(tok)) { r = aMin(r); cajaPrevia = 0; }
+    else if (cfg.cajaSinLetra !== "disco") r = cajaPrevia ? aMay(r) : aMin(r);
+    if (pasos) pasos.push({ i, cif: tok, claro: r, posM: pm, k, posF: pf });
+    sal.push(r); i++;
+  }
+  return sal.join("");
+}
+
+function cifrarAlberti(texto, cfg) {
+  const err = validarAlberti(cfg);
+  if (err) throw new Error(err);
+  const posF = indice(cfg.fijo), n = cfg.fijo.length;
+  let i = 0;
+  const sal = [];
+  for (const tok of tokenizar(texto)) {
+    const pf = posF.get(aMin(tok));
+    if (pf === undefined) { if (cfg.conservarDesconocidos) sal.push(tok); continue; }
+    const k = desplazamiento(i, cfg);
+    const q = (((pf - cfg.sentido * k) % n) + n) % n;
+    let r = cfg.movil[q];
+    if (cfg.conservarCaja) { if (esMay(tok)) r = aMay(r); else if (esMin(tok)) r = aMin(r); }
+    sal.push(r); i++;
+  }
+  return sal.join("");
+}
+
+function configAlbertiBase() {
+  return { fijo: tokenizar("ABCDEFGILMNOPQRSTVXZ1234"), movil: tokenizar("usqomkhfdbacegilnprtxz&y"),
+           k0: 0, inc: 1, L: 4, conservarCaja: true, conservarDesconocidos: true, sentido: 1, cajaSinLetra: "anterior" };
+}
+
+function entero(v, nombre) {
+  const s = String(v).trim();
+  if (!/^[+-]?\d+/.test(s)) throw new Error(`${nombre}: "${s}" no es un numero entero.`);
+  return parseInt(s, 10);
+}
+
+// Lee la configuracion: JSON de Cifrario (otro grupo) o config.txt de alberti.cpp.
+function leerConfigAlberti(raw) {
+  const fuente = String(raw).trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  if (!fuente) throw new Error("Pega la configuracion (JSON del otro grupo o config.txt).");
+  if (fuente.startsWith("{")) {
+    let j;
+    try { j = JSON.parse(fuente); } catch (e) { throw new Error("El JSON no es valido: revisa que este completo (llaves, comas y comillas)."); }
+    if (j.algorithm === "grille") throw new Error("Esta configuracion es de la rejilla, no del disco de Alberti.");
+    if (j.algorithm !== "alberti") throw new Error('El JSON no tiene "algorithm": "alberti".');
+    const cfg = {
+      fijo: tokenizar(String(j.outerAlphabet ?? "")), movil: tokenizar(String(j.innerAlphabet ?? "")),
+      k0: entero(j.offset ?? 0, "offset"), inc: entero(j.advance ?? 0, "advance"), L: entero(j.periodLength ?? 1, "periodLength"),
+      conservarCaja: (j.letterCase ?? "preserve") !== "uppercase",
+      conservarDesconocidos: (j.unsupported ?? "preserve") !== "remove",
+      // Cifrario cifra con D2[pos + giro]; para volver hay que RESTAR el giro.
+      sentido: -1, cajaSinLetra: "disco", compat: true,
+    };
+    return { cfg, formato: "json" };
+  }
+  const cfg = configAlbertiBase();
+  cfg.fijo = []; cfg.movil = [];
+  for (let linea of fuente.split(/\r?\n/)) {
+    linea = linea.trim();
+    if (!linea || linea[0] === "#") continue;
+    const p = linea.indexOf("=");
+    if (p < 0) continue;
+    const k = linea.slice(0, p).trim().toLowerCase(), v = linea.slice(p + 1).trim();
+    if (k === "disco1") cfg.fijo = tokenizar(v);
+    else if (k === "disco2") cfg.movil = tokenizar(v);
+    else if (k === "giro_inicial") cfg.k0 = entero(v, "GIRO_INICIAL");
+    else if (k === "incremento") cfg.inc = entero(v, "INCREMENTO");
+    else if (k === "periodo") cfg.L = entero(v, "PERIODO");
+    else if (k === "mayusculas") cfg.conservarCaja = v.toLowerCase() !== "normalizar";
+    else if (k === "desconocidos") cfg.conservarDesconocidos = v.toLowerCase() !== "eliminar";
+    else if (k === "sentido") cfg.sentido = entero(v, "SENTIDO") < 0 ? -1 : 1;
+  }
+  return { cfg, formato: "txt" };
+}
+
+if (typeof module !== "undefined") module.exports = {
+  normalizarRejilla, letrasPerdidas, leerHuecos, validarRejilla, posicionesPorGiro, cifrarRejilla, descifrarRejilla,
+  generarRejilla, rejillaComoTexto, leerRejillaTexto, configCifrario, descifrarComoCifrario,
+  tokenizar, validarAlberti, desplazamiento, descifrarAlberti, cifrarAlberti, configAlbertiBase, leerConfigAlberti,
+};
+
+</script>
+<script>
+const VECTORES_CIFRARIO = [{"nombre":"Valores por defecto de Cifrario","original":"Atacar al amanecer: llevar 12 cosas","cifrado":"UNUQSLSBQCQEFKFP:EEDZKTsqDPZH&","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":0,"advance":1,"periodLength":4,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"ATACARALAMANECER:LLEVAR12COSAS"},{"nombre":"Giro inicial 7, incremento 3, periodo 2","original":"La reunion es el viernes a las 19 horas","cifrado":"LFUIUYXOQYAQHRDDRPCSAZGFe9HHB&G","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":7,"advance":3,"periodLength":2,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"LAREONEOIEPEFVEEONBS2L2Sv9OLO2P"},{"nombre":"Periodo 1 (gira en cada letra)","original":"INVIARE RINFORZI DOMANI","cifrado":"AI&GF&GUR&RSKCUZHKZDH","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":3,"advance":1,"periodLength":1,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"INVIARERINFORZIDOMANI"},{"nombre":"Sin preprocesar: espacios y minusculas","original":"Nos vemos en la plaza, a las 7.","cifrado":"Lnx ucnxu gz tc szgal, l spd 7.","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":5,"advance":2,"periodLength":3,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":false,"removeDiacritics":true,"removeSpaces":false,"keep":"all"}},"esperado":"Nos vemos en la plaza, a las 7."},{"nombre":"Eliminar simbolos ajenos","original":"Hoy hay junta, kilo y waffles!","cifrado":"GQERFILREPPXZD","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":2,"advance":5,"periodLength":4,"unsupported":"remove","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"OANTAILOAFFLES"},{"nombre":"Normalizar a mayusculas","original":"secreto de estado","cifrado":"QLPKYCAQFF&YCIQ","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":11,"advance":4,"periodLength":2,"unsupported":"preserve","letterCase":"uppercase","preprocess":{"uppercase":false,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"SECRETODEESTADO"},{"nombre":"Disco de 27 letras con Ñ","original":"El niño come piñas en España","cifrado":"RLJMGFPDGMAIAÑVIZIRUKUI","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGHIJKLMNÑOPQRSTUVWXYZ","innerAlphabet":"zyxwvutsrqpoñnmlkjihgfedcba","offset":4,"advance":2,"periodLength":3,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":false,"removeSpaces":true,"keep":"all"}},"esperado":"ELNIÑOCOMEPIÑASENESPAÑA"},{"nombre":"Giro inicial grande (offset 100)","original":"CLAVE 1234","cifrado":"HEMMLflnp","config":{"version":1,"algorithm":"alberti","outerAlphabet":"ABCDEFGILMNOPQRSTVXZ1234","innerAlphabet":"usqomkhfdbacegilnprtxz&y","offset":100,"advance":7,"periodLength":3,"unsupported":"preserve","letterCase":"preserve","preprocess":{"uppercase":true,"removeDiacritics":true,"removeSpaces":true,"keep":"all"}},"esperado":"CLAVE1234"}];
+// ============================================================================
+// Casos de prueba que corren dentro de la pagina.
+//   - Rejilla: los 53 casos de casos_prueba.hpp (41 de cifrar + 12 de descifrar).
+//   - Alberti: los 29 casos de correrPruebas() de alberti.cpp.
+//   - Cifrario: mensajes cifrados con el codigo del otro grupo.
+// ============================================================================
+
+// Cifrador de referencia independiente: gira la PLANTILLA en vez de las posiciones.
+function girarPlantilla(r) {
+  const n = r.length, g = Array.from({ length: n }, () => Array(n).fill("."));
+  for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) g[c][n - 1 - f] = r[f][c];
+  return g.map(x => x.join(""));
+}
+function ordenReferencia(rej) {
+  const n = rej.length, orden = [];
+  let p = rej;
+  for (let g = 0; g < 4; g++) {
+    for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) if (p[f][c] === "X" || p[f][c] === "x") orden.push(f * n + c);
+    p = girarPlantilla(p);
+  }
+  return orden;
+}
+function cifrarReferencia(claro, rej, relleno = "X") {
+  const n = rej.length, tam = n * n, orden = ordenReferencia(rej);
+  while (claro.length % tam) claro += relleno;
+  let out = "";
+  for (let b = 0; b < claro.length; b += tam) {
+    const cuadro = Array(tam).fill("?");
+    for (let k = 0; k < tam; k++) cuadro[orden[k]] = claro[b + k];
+    out += cuadro.join("");
+  }
+  return out;
+}
+
+const R4 = "X.../...X/..X./.X..";
+const R6 = "....../XXX..X/.X.X../X....X/....../.....X";
+const R8 = "...X..XX/...X..X./X.....X./XX...X../....XX../..X...../..X...../.....XX.";
+const LARGO = "La criptografia clasica usaba trasposiciones como la rejilla de Fleissner y " +
+  "sustituciones como el disco de Alberti; hoy se estudian para entender por que " +
+  "los cifrados modernos son como son.";
+const LARGO_N = "LACRIPTOGRAFIACLASICAUSABATRASPOSICIONESCOMOLAREJILLADEFLEISSNERY" +
+  "SUSTITUCIONESCOMOELDISCODEALBERTIHOYSEESTUDIANPARAENTENDERPORQUE" +
+  "LOSCIFRADOSMODERNOSSONCOMOSON";
+
+// [grupo, nombre, texto, rejilla, relleno, normalizado esperado ("" = debe dar error)]
+const CASOS_REJILLA = [
+  ["Pedidos", "Texto corto", "HOLA", R4, "X", "HOLA"],
+  ["Pedidos", "Texto largo (5 bloques)", LARGO, R6, "X", LARGO_N],
+  ["Pedidos", "Con espacios", "Ataque al amanecer", R4, "X", "ATAQUEALAMANECER"],
+  ["Pedidos", "Con tildes y ñ", "La señora Núñez tomó café en Perú", R6, "X", "LASENORANUNEZTOMOCAFEENPERU"],
+  ["Pedidos", "Mayúsculas con tilde", "ÁRBOL ÉXITO ÍNDICE ÓRBITA ÚNICO Ñ", R6, "X", "ARBOLEXITOINDICEORBITAUNICON"],
+  ["Pedidos", "Diéresis", "Pingüino, cigüeña", R4, "X", "PINGUINOCIGUENA"],
+  ["Pedidos", "No llena la rejilla", "CIFRADO", R6, "X", "CIFRADO"],
+  ["Bordes", "Llena la rejilla exacto", "CRIPTOGRAFIA2026", R4, "X", "CRIPTOGRAFIA2026"],
+  ["Bordes", "Dos bloques exactos", "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345", R4, "X", "ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"],
+  ["Bordes", "Un bloque y una letra", "ABCDEFGHIJKLMNOPQ", R4, "X", "ABCDEFGHIJKLMNOPQ"],
+  ["Bordes", "Un solo carácter", "a", R4, "X", "A"],
+  ["Bordes", "Termina en X", "RELAX", R4, "X", "RELAX"],
+  ["Bordes", "Relleno en minúscula", "HOLA", R4, "q", "HOLA"],
+  ["Bordes", "Solo números", "2026 10 20", R4, "X", "20261020"],
+  ["Texto raro", "Signos del español", "¿Hola? ¡Sí! (ok) #1", R4, "X", "HOLASIOK1"],
+  ["Texto raro", "Saltos de línea y tabulaciones", "Primera\nSegunda\r\n\tTercera", R6, "X", "PRIMERASEGUNDATERCERA"],
+  ["Texto raro", "Tilde separada (Word/Mac)", "Perú José", R4, "X", "PERUJOSE"],
+  ["Texto raro", "Emoji dentro del texto", "Te veo a las 7 😀", R6, "X", "TEVEOALAS7"],
+  ["Texto raro", "Comillas y guiones tipográficos", "“Hola” — ok", R4, "X", "HOLAOK"],
+  ["Texto raro", "Otras letras con tilde (ã)", "São Paulo", R4, "X", "SAOPAULO"],
+  ["Texto raro", "Letras ö y ç", "Göttingen, François", R6, "X", "GOTTINGENFRANCOIS"],
+  ["Texto raro", "Texto ANSI (en la web llega como Unicode)", "Perú y España", R4, "X", "PERUYESPANA"],
+  ["Texto raro", "Francés (è û à ç)", "Crème brûlée à la française", R6, "X", "CREMEBRULEEALAFRANCAISE"],
+  ["Rejillas", "Rejilla mínima 2x2", "SOS", "X./..", "X", "SOS"],
+  ["Rejillas", "Rejilla 6x6", "Rejillas giratorias de Fleissner", R6, "X", "REJILLASGIRATORIASDEFLEISSNER"],
+  ["Rejillas", "Rejilla 8x8", LARGO, R8, "X", LARGO_N],
+  ["Rejillas", "Rejilla con x minúscula", "HOLA MUNDO", "x.../...x/..x./.x..", "X", "HOLAMUNDO"],
+  ["Deben dar error", "Texto vacío", "", R4, "X", ""],
+  ["Deben dar error", "Solo signos y espacios", "  ¿?  ¡! ...", R4, "X", ""],
+  ["Deben dar error", "Solo emoji", "😀😀", R4, "X", ""],
+  ["Deben dar error", "Huecos que se pisan", "HOLA", "X..X/..../..../X..X", "X", ""],
+  ["Deben dar error", "Faltan huecos", "HOLA", "X.../..../..X./....", "X", ""],
+  ["Deben dar error", "Sobran huecos", "HOLA", "XX../...X/..X./.X..", "X", ""],
+  ["Deben dar error", "Rejilla no cuadrada", "HOLA", "X.../...X/..X.", "X", ""],
+  ["Deben dar error", "Filas de distinto largo", "HOLA", "X.../...X/..X/.X..", "X", ""],
+  ["Deben dar error", "Lado impar", "HOLA", "X../.../...", "X", ""],
+  ["Deben dar error", "Carácter no válido", "HOLA", "XA../...X/..X./.X..", "X", ""],
+  ["Deben dar error", "Rejilla con 1 y 0", "HOLA", "1000/0001/0010/0100", "X", ""],
+  ["Deben dar error", "Rejilla vacía", "HOLA", "", "X", ""],
+  ["Deben dar error", "Relleno no válido", "HOLA", R4, "#", ""],
+  ["Deben dar error", "Relleno espacio", "HOLA", R4, " ", ""],
+];
+// [nombre, texto a cifrar, cifrado dado, rejilla, longitud, esperado ("" = error)]
+const CASOS_DESCIFRAR = [
+  ["Ida y vuelta: texto corto", "HOLA", "", R4, 4, "HOLA"],
+  ["Ida y vuelta: texto largo", LARGO, "", R6, 158, LARGO_N],
+  ["Ida y vuelta: con tildes", "La señora Núñez tomó café", "", R4, 21, "LASENORANUNEZTOMOCAFE"],
+  ["Ida y vuelta: termina en X", "RELAX", "", R4, 5, "RELAX"],
+  ["Sin longitud: deja el relleno", "HOLA", "", R4, -1, "HOLAXXXXXXXXXXXX"],
+  ["Cifrado del informe", "", "AEAUEMCTAAAERQLN", R4, -1, "ATAQUEALAMANECER"],
+  ["Cifrado con espacios al copiar", "", " AEAU EMCT\nAAAE RQLN ", R4, -1, "ATAQUEALAMANECER"],
+  ["Cifrado en minúsculas", "", "aeauemctaaaerqln", R4, -1, "ATAQUEALAMANECER"],
+  ["ERROR: cifrado incompleto", "", "AEAUEMCTAAAERQL", R4, -1, ""],
+  ["ERROR: cifrado vacío", "", "   ", R4, -1, ""],
+  ["ERROR: longitud mayor", "", "AEAUEMCTAAAERQLN", R4, 20, ""],
+  ["ERROR: rejilla inválida", "", "AEAUEMCTAAAERQLN", "X..X/..../..../X..X", -1, ""],
+];
+
+function partirRejilla(s) { return s === "" ? [] : s.split("/"); }
+
+function pruebasRejilla() {
+  const res = [];
+  for (const [grupo, nombre, texto, rej, rel, norm] of CASOS_REJILLA) {
+    const r = { grupo, nombre, ok: false, detalle: "" };
+    const filas = partirRejilla(rej);
+    try {
+      const out = cifrarRejilla(texto, filas, rel).cifrado;
+      if (!norm) r.detalle = "Devolvió un cifrado en vez de un error.";
+      else {
+        const esperado = cifrarReferencia(norm, filas, rel.toUpperCase());
+        r.ok = out === esperado;
+        r.detalle = r.ok ? `${norm.length} caracteres → ${out}` : `esperado ${esperado}, obtenido ${out}`;
+      }
+    } catch (e) {
+      r.ok = !norm;
+      r.detalle = r.ok ? "Rechazado: " + e.message : "Error con un texto válido: " + e.message;
+    }
+    res.push(r);
+  }
+  for (const [nombre, texto, dado, rej, lon, esp] of CASOS_DESCIFRAR) {
+    const r = { grupo: "Descifrar", nombre, ok: false, detalle: "" };
+    const filas = partirRejilla(rej);
+    try {
+      const cif = dado || cifrarRejilla(texto, filas, "X").cifrado;
+      const out = descifrarRejilla(cif, filas, lon);
+      r.ok = !!esp && out === esp;
+      r.detalle = esp ? (r.ok ? "→ " + out : `esperado ${esp}, obtenido ${out}`) : "Devolvió un texto en vez de un error.";
+    } catch (e) {
+      r.ok = !esp;
+      r.detalle = r.ok ? "Rechazado: " + e.message : "Error con una entrada válida: " + e.message;
+    }
+    res.push(r);
+  }
+  return res;
+}
+
+// correrPruebas() de alberti.cpp, caso por caso.
+function pruebasAlberti() {
+  const res = [];
+  const igualCaja = (a, b) => a.toLowerCase() === b.toLowerCase();
+  const reporta = (grupo, nombre, ok, detalle) => res.push({ grupo, nombre, ok, detalle });
+  const base = configAlbertiBase();
+  const vuelta = (cfg, t) => { const c = cifrarAlberti(t, cfg); return [c, descifrarAlberti(c, cfg)]; };
+  { const [c, d] = vuelta(base, "AMANECER"); reporta("Valor conocido", "AMANECER", d === "AMANECER" && c.toLowerCase() === "ubuaosog", `${c} → ${d}`); }
+  const textos = [
+    ["Texto corto", "SALDO"], ["Con espacios", "ATACAR AL AMANECER"], ["Minúsculas", "atacar al amanecer"],
+    ["Mayúsculas y minúsculas", "Atacar Al Amanecer"], ["Con tildes y eñe (sin tildes)", "El senor Onoro comio pan en Panama"],
+    ["Con tildes reales", "El señor Ñoño comió pan en Panamá"], ["Signos y saltos de línea", "¿Atacar? ¡Si! (oso)\nlinea 2"],
+    ["Con dígitos 1-4", "CLAVE 1234 E 99"], ["Un solo carácter", "A"], ["Solo símbolos ajenos", "¿?!, .."],
+    ["Cruza varios periodos", "ABCDEFGILMNOPQRSTVXZ1234ABCDEFGILMNOPQRSTVXZ1234"], ["Más de una vuelta", "A".repeat(30)],
+  ];
+  for (const [n, t] of textos) { const [c, d] = vuelta({ ...base }, t); reporta("Textos variados", n, igualCaja(d, t), `${c} → ${d}`); }
+  { const cfg = { ...base, conservarCaja: false }; const [c, d] = vuelta(cfg, "Atacar al amanecer"); reporta("Opciones", "Normalizar a mayúsculas", d === "ATACAR AL AMANECER", `${c} → ${d}`); }
+  { const cfg = { ...base, conservarDesconocidos: false }; const [c, d] = vuelta(cfg, "Atacar, al amanecer!"); reporta("Opciones", "Eliminar símbolos ajenos", igualCaja(d, "Atacaralamanecer"), `${c} → ${d}`); }
+  { const cfg = { ...base, sentido: -1 }; const [c, d] = vuelta(cfg, "Atacar al amanecer"); reporta("Opciones", "Sentido inverso (-1)", igualCaja(d, "Atacar al amanecer"), `${c} → ${d}`); }
+  for (const [k0, inc, L] of [[0, 0, 1], [5, 3, 2], [23, 1, 24], [-3, -2, 5], [100, 7, 3], [0, 1, 1]]) {
+    const cfg = { ...base, k0, inc, L }; const [c, d] = vuelta(cfg, "Atacar al amanecer");
+    reporta("Parámetros", `k0=${k0}, inc=${inc}, L=${L}`, igualCaja(d, "Atacar al amanecer"), `${c} → ${d}`);
+  }
+  { const cfg = { ...base, fijo: tokenizar("ABCÑ"), movil: tokenizar("xyz&"), L: 2, inc: 1, k0: 0 }; const [c, d] = vuelta(cfg, "AÑCBA"); reporta("Disco especial", "Disco con Ñ (UTF-8)", d === "AÑCBA", `${c} → ${d}`); }
+  const debeFallar = (nombre, cfg) => { let msg = ""; try { descifrarAlberti("abc", cfg); } catch (e) { msg = e.message; } reporta("Deben fallar", nombre, !!msg, msg ? "Rechazado: " + msg : "No dio error"); };
+  debeFallar("Longitudes distintas", { ...base, movil: base.movil.slice(0, -1) });
+  debeFallar("Símbolo repetido en disco 2", { ...base, movil: [base.movil[0], base.movil[0], ...base.movil.slice(2)] });
+  debeFallar("Símbolo repetido en disco 1", { ...base, fijo: [base.fijo[0], base.fijo[0], ...base.fijo.slice(2)] });
+  debeFallar("Periodo 0", { ...base, L: 0 });
+  debeFallar("Discos vacíos", { ...base, fijo: [], movil: [] });
+  debeFallar("Repetido sin distinguir mayúsculas", { ...base, fijo: tokenizar("ABC"), movil: tokenizar("aAc") });
+  return res;
+}
+
+// Mensajes cifrados con el codigo de Cifrario (la pagina del otro grupo).
+function pruebasCifrario() {
+  const res = VECTORES_CIFRARIO.map(v => {
+    const r = { grupo: "Alberti de Cifrario", nombre: v.nombre, ok: false, detalle: "" };
+    try {
+      const { cfg } = leerConfigAlberti(JSON.stringify(v.config));
+      const d = descifrarAlberti(v.cifrado, cfg);
+      r.ok = d === v.esperado;
+      r.detalle = `${v.cifrado} → ${d}`;
+    } catch (e) { r.detalle = "Error: " + e.message; }
+    return r;
+  });
+  for (const [t, rej] of [["Ataque al amanecer", R4], ["INVIARE RINFORZI DOMANI", R4], [LARGO, R6], ["La señora Núñez tomó café en Perú", R8]]) {
+    const filas = partirRejilla(rej), c = cifrarRejilla(t, filas, "X");
+    const d = descifrarComoCifrario(c.cifrado, configCifrario(filas, c.longitud));
+    res.push({ grupo: "Nuestra rejilla en Cifrario", nombre: t.length > 28 ? t.slice(0, 28) + "…" : t, ok: d === c.normalizado, detalle: `${c.cifrado.slice(0, 32)}${c.cifrado.length > 32 ? "…" : ""} → ${d.slice(0, 32)}${d.length > 32 ? "…" : ""}` });
+  }
+  return res;
+}
+
+if (typeof module !== "undefined") module.exports = { pruebasRejilla, pruebasAlberti, pruebasCifrario, cifrarReferencia };
+
+</script>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const NS = "http://www.w3.org/2000/svg";
+
+  // ---------- utilidades ----------
+  let toastT = 0;
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 1600); }
+  function copiar(texto, etiqueta) {
+    if (!texto) { toast("Nada que copiar"); return; }
+    const respaldo = () => {
+      const ta = document.createElement("textarea"); ta.value = texto; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select();
+      let ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      ta.remove(); toast(ok ? etiqueta + " copiado" : "Selecciona el texto y copia con Ctrl+C");
+    };
+    try { navigator.clipboard.writeText(texto).then(() => toast(etiqueta + " copiado"), respaldo); } catch (e) { respaldo(); }
+  }
+  function estado(el, clase, html) { el.className = "estado" + (clase ? " " + clase : ""); el.innerHTML = html; }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const vis = s => esc(s).replace(/ /g, "␣").replace(/\n/g, "↵");
+
+  // =====================================================================
+  //                              REJILLA
+  // =====================================================================
+  const R = { filas: ["X...", "...X", "..X.", ".X.."], res: null, bloque: 0, t: 16, timer: 0 };
+
+  function orbita(f, c, n) { const o = []; let a = f, b = c; for (let g = 0; g < 4; g++) { o.push([a, b]); [a, b] = [b, n - 1 - a]; } return o; }
+
+  function pintarEditor() {
+    const ed = $("rej-editor"), n = R.filas.length;
+    ed.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+    ed.innerHTML = "";
+    let huecos = [];
+    try { huecos = leerHuecos(R.filas); } catch (e) {}
+    const cub = new Set();
+    for (const [f, c] of huecos) orbita(f, c, n).forEach(([a, b]) => cub.add(a * n + b));
+    for (let f = 0; f < n; f++) for (let c = 0; c < n; c++) {
+      const b = document.createElement("button");
+      b.type = "button";
+      const h = R.filas[f] && (R.filas[f][c] === "X" || R.filas[f][c] === "x");
+      b.className = h ? "hueco" : (cub.has(f * n + c) ? "cub" : "");
+      b.setAttribute("aria-label", `Fila ${f + 1}, columna ${c + 1}${h ? ", hueco" : ""}`);
+      b.addEventListener("click", () => {
+        const filas = R.filas.map(s => s.split(""));
+        const ya = filas[f][c] === "X" || filas[f][c] === "x";
+        orbita(f, c, n).forEach(([a, bb]) => (filas[a][bb] = "."));
+        if (!ya) filas[f][c] = "X";
+        R.filas = filas.map(x => x.join(""));
+        $("rej-filas").value = rejillaComoTexto(R.filas);
+        pintarEditor(); cifrarYMostrar();
+      });
+      b.addEventListener("mouseenter", () => orbita(f, c, n).forEach(([a, bb]) => ed.children[a * n + bb]?.classList.add("orb")));
+      b.addEventListener("mouseleave", () => [...ed.children].forEach(x => x.classList.remove("orb")));
+      ed.appendChild(b);
+    }
+  }
+
+  function cifrarYMostrar() {
+    const texto = $("rej-txt").value, rel = $("rej-relleno").value;
+    const norm = normalizarRejilla(texto);
+    $("rej-prev").innerHTML = texto ? `Se cifra (<b>${norm.length}</b> caracteres): <b>${esc(norm) || "—"}</b>` : "Mayúsculas sin tildes, espacios ni signos (Ñ → N).";
+    const perd = letrasPerdidas(texto);
+    $("rej-aviso").hidden = !perd.length;
+    if (perd.length) $("rej-aviso").innerHTML = `Estas letras no se reconocen y se van a eliminar: <b>${esc(perd.join(" "))}</b>. Escríbelas sin tilde.`;
+    // validacion de la rejilla con los mensajes del C++
+    const n = R.filas.length;
+    try { validarRejilla(R.filas); estado($("rej-val"), "ok", `Rejilla válida: ${n}×${n}, ${n * n / 4} huecos, giro horario. Cada bloque guarda ${n * n} caracteres.`); }
+    catch (e) { estado($("rej-val"), "bad", "<b>Rejilla no válida.</b> " + esc(e.message)); }
+    try {
+      R.res = cifrarRejilla(texto, R.filas, rel);
+    } catch (e) {
+      R.res = null;
+      const o = $("rej-out"); o.className = "salida vacia"; o.textContent = e.message;
+      ["rej-d-lon", "rej-d-blq", "rej-d-rel", "rej-d-car"].forEach(id => ($(id).textContent = "—"));
+      estado($("rej-verif"), "", "Sin cifrado todavía.");
+      $("rej-json").textContent = "—"; $("rej-bloque").innerHTML = ""; $("rej-tab").innerHTML = ""; $("rej-minis").innerHTML = ""; $("rej-lectura").textContent = "";
+      return;
+    }
+    const r = R.res, o = $("rej-out");
+    o.className = "salida"; o.textContent = r.cifrado;
+    $("rej-d-lon").textContent = r.longitud; $("rej-d-blq").textContent = r.bloques.length;
+    $("rej-d-rel").textContent = r.relleno; $("rej-d-car").textContent = r.cifrado.length;
+    // verificacion: nuestro descifrado y el de Cifrario
+    const cfg = configCifrario(R.filas, r.longitud);
+    let v1 = false, v2 = false;
+    try { v1 = descifrarRejilla(r.cifrado, R.filas, r.longitud) === r.normalizado; } catch (e) {}
+    try { v2 = descifrarComoCifrario(r.cifrado, cfg) === r.normalizado; } catch (e) {}
+    estado($("rej-verif"), v1 && v2 ? "ok" : "bad",
+      `${v1 ? "✓" : "✗"} Al descifrar vuelve <b>${esc(r.normalizado)}</b> &nbsp; ${v2 ? "✓" : "✗"} El descifrador de Cifrario lo recupera con el JSON`);
+    $("rej-json").textContent = JSON.stringify(cfg, null, 2);
+    const sel = $("rej-bloque");
+    sel.innerHTML = r.bloques.map((_, i) => `<option value="${i}">${i + 1} de ${r.bloques.length}</option>`).join("");
+    R.bloque = Math.min(R.bloque, r.bloques.length - 1); sel.value = R.bloque;
+    const tam = r.n * r.n; $("rej-rango").max = tam;
+    pararRej(); R.t = tam; pintarPaso(); pintarMinis();
+  }
+
+  function textoChat() {
+    const r = R.res; if (!r) return "";
+    const cfg = configCifrario(R.filas, r.longitud);
+    return `MENSAJE CIFRADO (rejilla giratoria):\n${r.cifrado}\n\nCONFIGURACIÓN (Cifrario → Rejilla giratoria → Descifrar):\n${JSON.stringify(cfg, null, 2)}\n\nRejilla ${rejillaComoTexto(R.filas)} · giro horario · relleno ${$("rej-relleno").value.toUpperCase()} · longitud original ${r.longitud}`;
+  }
+
+  function celdaTablero(cls, ch) { const d = document.createElement("div"); d.className = cls; d.textContent = ch; return d; }
+
+  function estadoBloque(b, t) {
+    // letras escritas hasta el paso t (0..n^2) del bloque b
+    const r = R.res, n = r.n, cap = n * n / 4, pasos = r.bloques[b].pasos;
+    const celdas = Array.from({ length: n * n }, () => ({ ch: "", rel: false, paso: -1 }));
+    let k = 0;
+    for (let g = 0; g < 4; g++) for (const p of pasos[g]) { if (k < t) celdas[p.f * n + p.c] = { ch: p.ch, rel: p.esRelleno, paso: k }; k++; }
+    const giro = t === 0 ? 0 : Math.min(3, Math.floor((t - 1) / cap));
+    return { celdas, giro, huecos: new Set(pasos[giro].map(p => p.f * n + p.c)) };
+  }
+
+  function pintarPaso() {
+    const r = R.res; if (!r) return;
+    const n = r.n, tam = n * n, b = R.bloque, t = R.t;
+    const { celdas, giro, huecos } = estadoBloque(b, t);
+    const tab = $("rej-tab"); tab.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`; tab.innerHTML = "";
+    const terminado = t >= tam;
+    celdas.forEach((c, i) => {
+      let cls = c.ch ? "esc" : "";
+      if (c.rel) cls += " rel";
+      if (!terminado) cls += huecos.has(i) ? " act" : " cerr";
+      if (!terminado && c.paso === t - 1) cls += " ult";
+      tab.appendChild(celdaTablero(cls, c.ch));
+    });
+    $("rej-rango").value = t;
+    if (t === 0) { $("rej-giro-t").textContent = "Giro 1 · 0°"; $("rej-giro-d").textContent = "La rejilla está puesta; aún no se escribe nada. Avanza para escribir letra por letra."; }
+    else if (terminado) { $("rej-giro-t").textContent = "Cuadro completo"; $("rej-giro-d").innerHTML = `Se lee por filas: <b class="mono">${esc(r.bloques[b].cuadro.map(f => f.join("")).join(""))}</b>`; }
+    else {
+      const last = celdas.findIndex(c => c.paso === t - 1), f = Math.floor(last / n), cc = last % n;
+      $("rej-giro-t").textContent = `Giro ${giro + 1} · ${giro * 90}°`;
+      $("rej-giro-d").innerHTML = `Letra ${t} de ${tam}: <b class="mono">${esc(celdas[last].ch)}</b>${celdas[last].rel ? " (relleno)" : ""} en fila ${f + 1}, columna ${cc + 1}. Los huecos se llenan por filas; al acabar los ${n * n / 4} huecos la rejilla gira 90° a la derecha.`;
+    }
+  }
+
+  function pintarMinis() {
+    const r = R.res, n = r.n, cap = n * n / 4, b = R.bloque, cont = $("rej-minis");
+    cont.innerHTML = "";
+    for (let g = 0; g <= 4; g++) {
+      const m = document.createElement("div"); m.className = "mini";
+      const sp = document.createElement("span"); sp.textContent = g < 4 ? `Giro ${g + 1} · ${g * 90}°` : "Final"; m.appendChild(sp);
+      const tab = document.createElement("div"); tab.className = "tablero"; tab.style.gridTemplateColumns = `repeat(${n}, minmax(0, 1fr))`;
+      const { celdas, huecos } = estadoBloque(b, g < 4 ? (g + 1) * cap : n * n);
+      celdas.forEach((c, i) => tab.appendChild(celdaTablero((c.ch ? "esc" : "") + (c.rel ? " rel" : "") + (g < 4 && huecos.has(i) ? " act" : ""), c.ch)));
+      m.appendChild(tab); cont.appendChild(m);
+    }
+    const cuadro = r.bloques[b].cuadro.map(f => f.join("")).join("");
+    $("rej-lectura").innerHTML = `Bloque ${b + 1}: <b>${esc(cuadro)}</b> · Mensaje completo: ${esc(r.cifrado)}`;
+  }
+
+  function pararRej() { clearInterval(R.timer); R.timer = 0; $("rej-play").textContent = "▶ Reproducir"; }
+  function moverRej(d) { if (!R.res) return; pararRej(); R.t = Math.max(0, Math.min(R.res.n * R.res.n, R.t + d)); pintarPaso(); }
+
+  $("rej-txt").addEventListener("input", cifrarYMostrar);
+  $("rej-relleno").addEventListener("input", cifrarYMostrar);
+  $("rej-filas").addEventListener("input", e => {
+    R.filas = leerRejillaTexto(e.target.value);
+    if (R.filas.length >= 2 && R.filas.every(s => s.length === R.filas.length) && R.filas.length % 2 === 0 && R.filas.length <= 12) $("rej-n").value = R.filas.length;
+    pintarEditor(); cifrarYMostrar();
+  });
+  $("rej-n").addEventListener("change", e => { R.filas = generarRejilla(+e.target.value); $("rej-filas").value = rejillaComoTexto(R.filas); pintarEditor(); cifrarYMostrar(); });
+  $("rej-ej").addEventListener("click", () => { R.filas = ["X...", "...X", "..X.", ".X.."]; $("rej-n").value = 4; $("rej-filas").value = rejillaComoTexto(R.filas); pintarEditor(); cifrarYMostrar(); });
+  $("rej-azar").addEventListener("click", () => { R.filas = generarRejilla(+$("rej-n").value); $("rej-filas").value = rejillaComoTexto(R.filas); pintarEditor(); cifrarYMostrar(); });
+  $("rej-go").addEventListener("click", () => { cifrarYMostrar(); if (R.res) { pararRej(); R.t = 0; pintarPaso(); toast("Cifrado"); } });
+  $("rej-copychat").addEventListener("click", () => copiar(textoChat(), "Mensaje para el chat"));
+  $("rej-copycif").addEventListener("click", () => copiar(R.res ? R.res.cifrado : "", "Cifrado"));
+  $("rej-copyjson").addEventListener("click", () => copiar(R.res ? JSON.stringify(configCifrario(R.filas, R.res.longitud), null, 2) : "", "JSON"));
+  $("rej-bloque").addEventListener("change", e => { R.bloque = +e.target.value; pararRej(); R.t = R.res.n * R.res.n; pintarPaso(); pintarMinis(); });
+  $("rej-rango").addEventListener("input", e => { pararRej(); R.t = +e.target.value; pintarPaso(); });
+  $("rej-prev").addEventListener("click", () => moverRej(-1));
+  $("rej-next").addEventListener("click", () => moverRej(1));
+  $("rej-play").addEventListener("click", () => {
+    if (!R.res) return;
+    if (R.timer) { pararRej(); return; }
+    const tam = R.res.n * R.res.n; if (R.t >= tam) R.t = 0;
+    $("rej-play").textContent = "❚❚ Pausa";
+    R.timer = setInterval(() => { R.t++; pintarPaso(); if (R.t >= tam) pararRej(); }, 420);
+  });
+
+  // =====================================================================
+  //                              ALBERTI
+  // =====================================================================
+  const A = { pasos: [], i: 0, timer: 0, cfg: null, texto: "" };
+
+  function cfgDeCampos() {
+    const conv = $("alb-conv").value;
+    return {
+      fijo: tokenizar($("alb-d1").value.trim()), movil: tokenizar($("alb-d2").value.trim()),
+      k0: entero($("alb-k0").value, "Giro inicial"), inc: entero($("alb-inc").value, "Incremento"), L: entero($("alb-L").value, "Periodo"),
+      conservarCaja: $("alb-caja").value === "conservar", conservarDesconocidos: $("alb-desc").value === "conservar",
+      sentido: conv === "cpp1" ? 1 : -1, compat: conv === "cifrario", cajaSinLetra: conv === "cifrario" ? "disco" : "anterior",
+    };
+  }
+  function camposDeCfg(cfg) {
+    $("alb-d1").value = cfg.fijo.join(""); $("alb-d2").value = cfg.movil.join("");
+    $("alb-k0").value = cfg.k0; $("alb-inc").value = cfg.inc; $("alb-L").value = cfg.L;
+    $("alb-caja").value = cfg.conservarCaja ? "conservar" : "normalizar";
+    $("alb-desc").value = cfg.conservarDesconocidos ? "conservar" : "eliminar";
+    $("alb-conv").value = cfg.compat ? "cifrario" : (cfg.sentido === 1 ? "cpp1" : "cppm1");
+  }
+
+  function leerConfigTexto() {
+    const raw = $("alb-cfgtxt").value;
+    if (!raw.trim()) { estado($("alb-formato"), "", "Esperando configuración. Pega el JSON del otro grupo o un config.txt."); return; }
+    try {
+      const { cfg, formato } = leerConfigAlberti(raw);
+      camposDeCfg(cfg);
+      estado($("alb-formato"), "ok", formato === "json"
+        ? "<b>JSON de Cifrario detectado.</b> Se usa su regla: para volver se resta el giro (D1[pos − k])."
+        : `<b>config.txt detectado.</b> SENTIDO = ${cfg.sentido}: claro = D1[pos ${cfg.sentido === 1 ? "+" : "−"} k].`);
+    } catch (e) { estado($("alb-formato"), "bad", "<b>No se pudo leer.</b> " + esc(e.message)); }
+  }
+
+  function avisoColision(cfg) {
+    // letras que no estan en el disco fijo pero si (como simbolo) en el movil
+    const fijoMay = new Set(cfg.fijo.map(s => s.toLocaleUpperCase()));
+    const movilMay = new Set(cfg.movil.map(s => s.toLocaleUpperCase()));
+    const choque = [..."ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"].filter(l => !fijoMay.has(l) && movilMay.has(l));
+    const faltan = [..."ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"].filter(l => !fijoMay.has(l));
+    const av = $("alb-aviso");
+    if (cfg.conservarDesconocidos && choque.length) {
+      av.hidden = false;
+      av.innerHTML = `<b>Cuidado:</b> las letras <b>${choque.join(" ")}</b> no están en el Disco 1 pero sí en el Disco 2. Si el texto original las tenía, quedaron iguales en el cifrado y se confunden con letras cifradas: ningún descifrador puede recuperarlas. Que el otro grupo use un Disco 1 con esas letras o las escriba de otra forma.`;
+    } else if (faltan.length && !cfg.conservarDesconocidos) {
+      av.hidden = false;
+      av.innerHTML = `Las letras <b>${faltan.join(" ")}</b> no están en el Disco 1: si el texto original las tenía, se eliminaron al cifrar.`;
+    } else av.hidden = true;
+  }
+
+  function descifrarYMostrar() {
+    const texto = $("alb-cif").value, out = $("alb-out");
+    $("alb-cif-info").textContent = texto ? `${[...texto].length} caracteres` : "";
+    let cfg;
+    try { cfg = cfgDeCampos(); } catch (e) { A.cfg = null; out.className = "salida vacia"; out.textContent = e.message; limpiarPasos(); estado($("alb-alt"), "", ""); return; }
+    avisoColision(cfg);
+    const err = cfg.compat ? "" : validarAlberti(cfg);
+    if (!texto.trim()) { out.className = "salida vacia"; out.textContent = "Pega el mensaje cifrado."; A.cfg = cfg; dibujarDisco(cfg); limpiarPasos(); estado($("alb-alt"), "", ""); return; }
+    const pasos = [];
+    try {
+      const d = descifrarAlberti(texto, cfg, pasos);
+      out.className = "salida"; out.textContent = d;
+      A.cfg = cfg; A.pasos = pasos; A.texto = d; A.i = 0;
+      // la otra regla del giro, por si la configuracion vino con el sentido cambiado
+      const otra = cfg.sentido === 1 ? { ...cfg, sentido: -1, compat: true, cajaSinLetra: "disco" } : { ...cfg, sentido: 1, compat: false, cajaSinLetra: "anterior" };
+      let alt = ""; try { alt = descifrarAlberti(texto, otra); } catch (e) {}
+      estado($("alb-alt"), "", alt && alt !== d
+        ? `Si el giro fuera al revés (D1[pos ${cfg.sentido === 1 ? "−" : "+"} k]) saldría: <span class="mono">${esc(alt)}</span>. Usa el que se lea con sentido.`
+        : "El resultado no depende del sentido del giro con esta configuración.");
+      dibujarDisco(cfg); pintarTabla(); irA(0);
+    } catch (e) {
+      A.cfg = null; out.className = "salida vacia"; out.textContent = (err || e.message);
+      limpiarPasos(); estado($("alb-alt"), "", "");
+    }
+  }
+
+  function limpiarPasos() { A.pasos = []; $("alb-tabla").innerHTML = ""; $("alb-rango").max = 0; $("alb-paso-t").textContent = "Letra —"; $("alb-formula").textContent = "—"; pararAlb(); }
+
+  function dibujarDisco(cfg) {
+    const svg = $("alb-svg"); svg.innerHTML = "";
+    if (!cfg || cfg.fijo.length < 2 || cfg.fijo.length !== cfg.movil.length) return;
+    const n = cfg.fijo.length, cx = 180, cy = 180, paso = 360 / n;
+    const el = (tag, at, padre = svg) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); padre.appendChild(e); return e; };
+    el("circle", { cx, cy, r: 172, fill: "#1f1f21", stroke: "#e85b50", "stroke-opacity": 0.9, "stroke-width": 1.5 });
+    el("circle", { cx, cy, r: 132, fill: "#252527", stroke: "#3a393d", "stroke-width": 1 });
+    el("circle", { cx, cy, r: 92, fill: "#1a1a1c", stroke: "#4a484c", "stroke-opacity": 1, "stroke-width": 1 });
+    // sector resaltado (se mueve por paso)
+    const sector = el("path", { id: "alb-sector", fill: "#f3d4ae", "fill-opacity": 0.13, stroke: "#f3d4ae", "stroke-opacity": 0.8, "stroke-width": 1 });
+    const fs1 = Math.max(9, Math.min(18, 2 * Math.PI * 152 / n * 0.62)), fs2 = Math.max(8, Math.min(16, 2 * Math.PI * 112 / n * 0.62));
+    const gF = el("g", { id: "alb-fijo" });
+    cfg.fijo.forEach((s, j) => {
+      const g = el("g", { transform: `rotate(${j * paso} ${cx} ${cy})` }, gF);
+      el("line", { x1: cx, y1: cy - 172, x2: cx, y2: cy - 132, stroke: "#3a393d", "stroke-width": 1, transform: `rotate(${paso / 2} ${cx} ${cy})` }, g);
+      const t = el("text", { x: cx, y: cy - 146, "text-anchor": "middle", "font-family": "Barlow Condensed, sans-serif", "font-weight": 600, "font-size": fs1 + 2, fill: "#eeece6" }, g);
+      t.textContent = s; t.dataset.p = j;
+    });
+    const gM = el("g", { id: "alb-movil", class: "anillo-movil", style: `transform-origin: ${cx}px ${cy}px` });
+    cfg.movil.forEach((s, j) => {
+      const g = el("g", { transform: `rotate(${j * paso} ${cx} ${cy})` }, gM);
+      const t = el("text", { x: cx, y: cy - 106, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-weight": 700, "font-size": fs2, fill: "#e85b50" }, g);
+      t.textContent = s; t.dataset.j = j;
+    });
+    const c1 = el("text", { id: "alb-centro1", x: cx, y: cy - 6, "text-anchor": "middle", "font-family": "JetBrains Mono, monospace", "font-size": 30, "font-weight": 700, fill: "#e85b50" });
+    const c2 = el("text", { id: "alb-centro2", x: cx, y: cy + 28, "text-anchor": "middle", "font-family": "Barlow Condensed, sans-serif", "font-size": 18, fill: "#a8a59e" });
+    c1.textContent = "k"; c2.textContent = "giro";
+  }
+
+  function sectorPath(p, n) {
+    const cx = 180, cy = 180, a0 = (p - 0.5) * 2 * Math.PI / n - Math.PI / 2, a1 = (p + 0.5) * 2 * Math.PI / n - Math.PI / 2;
+    const pt = (r, a) => `${(cx + r * Math.cos(a)).toFixed(2)} ${(cy + r * Math.sin(a)).toFixed(2)}`;
+    return `M ${pt(92, a0)} L ${pt(172, a0)} A 172 172 0 0 1 ${pt(172, a1)} L ${pt(92, a1)} A 92 92 0 0 0 ${pt(92, a0)} Z`;
+  }
+
+  function pintarTabla() {
+    const tb = $("alb-tabla");
+    tb.innerHTML = A.pasos.map((p, idx) => `<tr data-i="${idx}"><td>${p.i}</td><td>${vis(p.cif)}</td><td>${p.posM}</td><td>${p.k}</td><td>${p.posF}</td><td>${vis(p.claro)}</td></tr>`).join("");
+    $("alb-rango").max = Math.max(0, A.pasos.length - 1);
+  }
+
+  function irA(idx) {
+    if (!A.pasos.length || !A.cfg) return;
+    A.i = Math.max(0, Math.min(A.pasos.length - 1, idx));
+    const p = A.pasos[A.i], cfg = A.cfg, n = cfg.fijo.length, paso = 360 / n;
+    const gM = $("alb-movil"); if (gM) gM.style.transform = `rotate(${cfg.sentido * p.k * paso}deg)`;
+    const sec = $("alb-sector"); if (sec) sec.setAttribute("d", sectorPath(p.posF, n));
+    document.querySelectorAll("#alb-fijo text").forEach(t => t.setAttribute("fill", +t.dataset.p === p.posF ? "#f3d4ae" : "#eeece6"));
+    document.querySelectorAll("#alb-movil text").forEach(t => t.setAttribute("fill", +t.dataset.j === p.posM ? "#f3d4ae" : "#e85b50"));
+    const c1 = $("alb-centro1"), c2 = $("alb-centro2"); if (c1) { c1.textContent = `k=${p.k}`; c2.textContent = `${p.cif} → ${p.claro}`; }
+    $("alb-paso-t").textContent = `Letra ${A.i + 1} de ${A.pasos.length}`;
+    const signo = cfg.sentido === 1 ? "+" : "−";
+    $("alb-formula").innerHTML =
+      `Cifrada <i>${vis(p.cif)}</i> está en la posición <b>${p.posM}</b> del Disco 2.<br>` +
+      `k(${p.i}) = (${cfg.k0} + ⌊${p.i}/${cfg.L}⌋·${cfg.inc}) mod ${n} = <b>${p.k}</b><br>` +
+      `${p.posM} ${signo} ${p.k} (mod ${n}) = <b>${p.posF}</b> → Disco 1: <i>${vis(p.claro)}</i>`;
+    $("alb-rango").value = A.i;
+    const tb = $("alb-tabla");
+    tb.querySelectorAll("tr.sel").forEach(r => r.classList.remove("sel"));
+    const fila = tb.children[A.i];
+    if (fila) { fila.classList.add("sel"); const cont = tb.closest(".tabla"); const top = fila.offsetTop - cont.clientHeight / 2; cont.scrollTop = Math.max(0, top); }
+  }
+  function pararAlb() { clearInterval(A.timer); A.timer = 0; $("alb-play").textContent = "▶ Reproducir"; }
+
+  $("alb-cif").addEventListener("input", descifrarYMostrar);
+  $("alb-cfgtxt").addEventListener("input", () => { leerConfigTexto(); descifrarYMostrar(); });
+  ["alb-d1", "alb-d2", "alb-k0", "alb-inc", "alb-L", "alb-caja", "alb-desc", "alb-conv"].forEach(id => $(id).addEventListener("input", descifrarYMostrar));
+  $("alb-go").addEventListener("click", () => { leerConfigTexto(); descifrarYMostrar(); if (A.pasos.length) toast("Descifrado"); });
+  $("alb-copy").addEventListener("click", () => copiar(A.cfg && A.pasos.length ? A.texto : "", "Descifrado"));
+  $("alb-copychat").addEventListener("click", () => copiar(A.cfg && A.pasos.length ? `DESCIFRADO (disco de Alberti):\n${A.texto}` : "", "Mensaje para el chat"));
+  $("alb-rango").addEventListener("input", e => { pararAlb(); irA(+e.target.value); });
+  $("alb-prev").addEventListener("click", () => { pararAlb(); irA(A.i - 1); });
+  $("alb-next").addEventListener("click", () => { pararAlb(); irA(A.i + 1); });
+  $("alb-tabla").addEventListener("click", e => { const tr = e.target.closest("tr"); if (tr) { pararAlb(); irA(+tr.dataset.i); } });
+  $("alb-play").addEventListener("click", () => {
+    if (!A.pasos.length) return;
+    if (A.timer) { pararAlb(); return; }
+    if (A.i >= A.pasos.length - 1) irA(0);
+    $("alb-play").textContent = "❚❚ Pausa";
+    A.timer = setInterval(() => { if (A.i >= A.pasos.length - 1) { pararAlb(); return; } irA(A.i + 1); }, 700);
+  });
+  function ejemploCifrario() {
+    const v = VECTORES_CIFRARIO[0];
+    $("alb-cif").value = v.cifrado; $("alb-cfgtxt").value = JSON.stringify(v.config, null, 2);
+    leerConfigTexto(); descifrarYMostrar();
+  }
+  $("alb-ej1").addEventListener("click", ejemploCifrario);
+  $("alb-ej2").addEventListener("click", () => {
+    $("alb-cif").value = "Unuqyg yf &f&dsysc: mmugtb ln xkbrd";
+    $("alb-cfgtxt").value = "# Configuracion del disco (copiar los valores del otro equipo)\nDISCO1 = ABCDEFGILMNOPQRSTVXZ1234\nDISCO2 = usqomkhfdbacegilnprtxz&y\nGIRO_INICIAL = 0\nINCREMENTO = 1\nPERIODO = 4\n# conservar | normalizar\nMAYUSCULAS = conservar\n# conservar | eliminar\nDESCONOCIDOS = conservar\nSENTIDO = 1";
+    leerConfigTexto(); descifrarYMostrar();
+  });
+
+  // =====================================================================
+  //                              PRUEBAS
+  // =====================================================================
+  function correrPruebas() {
+    const suites = [
+      { nom: "Rejilla · cifrado_rejillas.cpp", res: pruebasRejilla(), chip: "Rejilla" },
+      { nom: "Alberti · alberti.cpp", res: pruebasAlberti(), chip: "Alberti" },
+      { nom: "Compatibilidad con Cifrario", res: pruebasCifrario(), chip: "Cifrario" },
+    ];
+    $("suites").innerHTML = suites.map(s => {
+      const ok = s.res.filter(r => r.ok).length;
+      let grupo = "";
+      const items = s.res.map((r, i) => {
+        const g = r.grupo !== grupo ? (grupo = r.grupo, `<span class="g">${esc(r.grupo)}</span>`) : "";
+        return `<li><span class="m ${r.ok ? "ok" : "bad"}">${r.ok ? "✓" : "✗"}</span><div>${g}${g ? "<br>" : ""}${i + 1}. ${esc(r.nombre)}<small>${esc(r.detalle)}</small></div></li>`;
+      }).join("");
+      return `<details class="suite"><summary><span class="nom">${esc(s.nom)}</span><span class="cnt ${ok === s.res.length ? "ok" : "bad"}">${ok}/${s.res.length}</span></summary><ol>${items}</ol></details>`;
+    }).join("");
+    [["st-rej", 0], ["st-alb", 1], ["st-cif", 2]].forEach(([id, i]) => { const r = suites[i].res, ok = r.filter(x => x.ok).length; $(id).textContent = `${ok}/${r.length}`; $(id).className = ok === r.length ? "ok" : ""; });
+    $("chips").innerHTML = suites.map(s => { const ok = s.res.filter(r => r.ok).length; return `<span class="chip ${ok === s.res.length ? "ok" : "bad"}">${s.chip} <b>${ok}/${s.res.length}</b></span>`; }).join("");
+  }
+  $("pr-run").addEventListener("click", () => { correrPruebas(); toast("Pruebas ejecutadas"); });
+
+  // ---------- silueta de ciudad de la banda coral ----------
+  (function ciudad() {
+    const svg = $("ciudad"); let seed = 23;
+    const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+    const capa = (color, hmin, hmax, wmin, wmax, base) => {
+      let x = 0, d = `M0 110 L0 ${base}`;
+      while (x < 1200) {
+        const w = wmin + rnd() * (wmax - wmin), h = hmin + rnd() * (hmax - hmin);
+        d += ` L${x.toFixed(1)} ${110 - h} L${(x + w).toFixed(1)} ${110 - h}`;
+        if (rnd() < 0.25) { const ax = x + w * 0.5; d += ` L${ax} ${110 - h} L${ax} ${110 - h - 10 - rnd() * 14} L${ax + 2} ${110 - h - 10} L${ax + 2} ${110 - h}`; }
+        x += w;
+      }
+      d += ` L1200 110 Z`;
+      const p = document.createElementNS(NS, "path"); p.setAttribute("d", d); p.setAttribute("fill", color); svg.appendChild(p);
+    };
+    capa("#b9433b", 40, 100, 30, 70, 60);
+    capa("#8e342e", 22, 64, 18, 46, 80);
+    capa("#1a1a1c", 8, 34, 10, 26, 100);
+  })();
+
+  // ---------- estado inicial (ejemplos) ----------
+  $("rej-txt").value = "Ataque al amanecer";
+  $("rej-filas").value = rejillaComoTexto(R.filas);
+  pintarEditor(); cifrarYMostrar();
+  ejemploCifrario();
+  correrPruebas();
+})();
+</script>
+
+</body>
+</html>

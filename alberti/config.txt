@@ -1,0 +1,11 @@
+# Configuracion del disco (copiar los valores del otro equipo)
+DISCO1 = ABCDEFGILMNOPQRSTVXZ1234
+DISCO2 = usqomkhfdbacegilnprtxz&y
+GIRO_INICIAL = 0
+INCREMENTO = 1
+PERIODO = 4
+# conservar | normalizar
+MAYUSCULAS = conservar
+# conservar | eliminar
+DESCONOCIDOS = conservar
+SENTIDO = 1
